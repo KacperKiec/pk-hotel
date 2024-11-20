@@ -1,0 +1,17 @@
+spring:
+    application:
+        name: pk-hotel-backend
+    datasource:
+        url: jdbc:mysql://localhost:3307/pk_hotel_db?createDatabaseIfNotExist=true
+        username: developer
+        password: developer
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    jpa:
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                format_sql: true
+    flyway:
+        enabled: true
+        baseline-on-migrate: true
