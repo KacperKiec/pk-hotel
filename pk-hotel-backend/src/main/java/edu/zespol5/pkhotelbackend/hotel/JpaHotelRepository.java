@@ -1,8 +1,10 @@
 package edu.zespol5.pkhotelbackend.hotel;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-interface JpaHotelRepository extends JpaRepository<Hotel, Integer>, HotelRepository {
+interface JpaHotelRepository extends JpaRepository<Hotel, Integer>, JpaSpecificationExecutor<Hotel>, HotelRepository {
+
 }

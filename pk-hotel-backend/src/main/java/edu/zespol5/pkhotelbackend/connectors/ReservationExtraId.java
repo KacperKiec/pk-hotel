@@ -7,14 +7,6 @@ public class ReservationExtraId implements Serializable {
     private int reservation;
     private int extra;
 
-    public ReservationExtraId(){
-
-    }
-
-    public ReservationExtraId(int reservation, int extra) {
-
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
