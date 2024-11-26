@@ -17,7 +17,7 @@ public class RoomSpecification {
         };
     }
 
-    public static Specification<Room> hasPriceGreaterThan(Integer price) {
+    public static Specification<Room> hasPriceGreaterOrEqualThan(Integer price) {
         return (root, query, builder) -> {
             if(price == null) {
                 return builder.conjunction();
@@ -26,7 +26,7 @@ public class RoomSpecification {
         };
     }
 
-    public static Specification<Room> hasPriceLessThan(Integer price) {
+    public static Specification<Room> hasPriceLessOrEqualThan(Integer price) {
         return (root, query, builder) -> {
             if(price == null) {
                 return builder.conjunction();

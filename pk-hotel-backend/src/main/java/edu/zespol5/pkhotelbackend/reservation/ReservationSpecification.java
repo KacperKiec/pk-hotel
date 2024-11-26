@@ -21,4 +21,13 @@ public class ReservationSpecification {
             return builder.equal(root.join("room").get("hotel").get("id"), hotelId);
         };
     }
+
+    public static Specification<Reservation> hasClientId(Integer clientId){
+        return (root, query, builder) -> {
+            if(clientId == null) {
+                return builder.conjunction();
+            }
+            return builder.equal(root.join("client").get("id"), clientId);
+        };
+    }
 }
