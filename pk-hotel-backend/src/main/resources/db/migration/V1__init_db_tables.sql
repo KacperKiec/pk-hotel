@@ -19,7 +19,7 @@ CREATE TABLE room (
    FOREIGN KEY (hotel_id) REFERENCES hotel(id)
 );
 
-CREATE TABLE client (
+CREATE TABLE user (
     id int(8) PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE review (
     rating int(3),
     content TEXT,
     FOREIGN KEY (hotel_id) REFERENCES hotel(id),
-    FOREIGN KEY (client_id) REFERENCES client(id)
+    FOREIGN KEY (client_id) REFERENCES user(id)
 );
 
 CREATE TABLE convenience (
@@ -60,7 +60,7 @@ CREATE TABLE reservation (
     check_in_date DATE NOT NULL,
     check_out_date DATE NOT NULL,
     status enum('DELETED', 'ACCEPTED', 'IN_REALISATION', 'ENDED'),
-    FOREIGN KEY (client_id) REFERENCES client(id),
+    FOREIGN KEY (client_id) REFERENCES user(id),
     FOREIGN KEY (hotel_id, room_nr) REFERENCES room(hotel_id, room_nr)
 );
 
