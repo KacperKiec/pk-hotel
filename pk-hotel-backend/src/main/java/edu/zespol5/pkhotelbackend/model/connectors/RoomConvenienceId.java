@@ -1,6 +1,6 @@
 package edu.zespol5.pkhotelbackend.model.connectors;
 
-import edu.zespol5.pkhotelbackend.model.RoomId;
+import edu.zespol5.pkhotelbackend.model.room.RoomId;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.Setter;

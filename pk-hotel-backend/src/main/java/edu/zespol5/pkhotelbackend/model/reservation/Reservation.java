@@ -1,9 +1,14 @@
-package edu.zespol5.pkhotelbackend.model;
+package edu.zespol5.pkhotelbackend.model.reservation;
 
+import edu.zespol5.pkhotelbackend.model.connectors.ReservationExtra;
+import edu.zespol5.pkhotelbackend.model.room.Room;
+import edu.zespol5.pkhotelbackend.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -29,4 +34,7 @@ public class Reservation {
 
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
+
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<ReservationExtra> extras = new HashSet<>();
 }

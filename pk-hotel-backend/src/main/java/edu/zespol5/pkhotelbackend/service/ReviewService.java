@@ -40,12 +40,12 @@ public class ReviewService {
     }
 
     public List<Review> getReviewsBy(
-            int hotelId,
-            int clientId,
-            int upperRatingLimit,
-            int lowerRatingLimit) {
+            Integer hotelId,
+            Integer clientId,
+            Integer upperRatingLimit,
+            Integer lowerRatingLimit) {
 
-        userRepository.findClientById(clientId).orElseThrow(
+        userRepository.findUserById(clientId).orElseThrow(
                 () -> new UserNotFoundException("Client with id " + clientId + " was not found")
         );
 

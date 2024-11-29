@@ -1,4 +1,4 @@
-package edu.zespol5.pkhotelbackend.model;
+package edu.zespol5.pkhotelbackend.model.user;
 
 import lombok.Data;
 
@@ -10,4 +10,5 @@ public class UserDTO {
     private String lastName;
     private String email;
     private LocalDate birthDate;
+    private UserRole role;
 }

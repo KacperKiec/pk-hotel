@@ -1,6 +1,6 @@
 package edu.zespol5.pkhotelbackend.repository.user;
 
-import edu.zespol5.pkhotelbackend.model.User;
+import edu.zespol5.pkhotelbackend.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

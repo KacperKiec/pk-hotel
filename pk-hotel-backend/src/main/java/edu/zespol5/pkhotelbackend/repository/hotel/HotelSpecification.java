@@ -1,6 +1,6 @@
 package edu.zespol5.pkhotelbackend.repository.hotel;
 
-import edu.zespol5.pkhotelbackend.model.Hotel;
+import edu.zespol5.pkhotelbackend.model.hotel.Hotel;
 import edu.zespol5.pkhotelbackend.model.Review;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Root;

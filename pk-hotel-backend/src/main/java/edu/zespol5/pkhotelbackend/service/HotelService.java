@@ -1,9 +1,10 @@
 package edu.zespol5.pkhotelbackend.service;
 
 import edu.zespol5.pkhotelbackend.exception.HotelNotFoundException;
+import edu.zespol5.pkhotelbackend.model.hotel.HotelDTO;
 import edu.zespol5.pkhotelbackend.repository.hotel.HotelRepository;
 import edu.zespol5.pkhotelbackend.repository.hotel.HotelSpecification;
-import edu.zespol5.pkhotelbackend.model.Hotel;
+import edu.zespol5.pkhotelbackend.model.hotel.Hotel;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,8 @@ public class HotelService {
         this.repository = repository;
     }
 
-    public Hotel save(Hotel hotel) {
-        return repository.save(hotel);
+    public HotelDTO save(Hotel hotel) {
+        return toDTO(repository.save(hotel));
     }
 
     public Hotel getHotelById(int id) {
@@ -35,8 +36,8 @@ public class HotelService {
             String name,
             List<String> countries,
             List<String> cities,
-            int lowerRatingLimit,
-            int upperRatingLimit) {
+            Integer lowerRatingLimit,
+            Integer upperRatingLimit) {
 
         Specification<Hotel> spec = Specification.where(HotelSpecification.hasName(name)
                 .and(HotelSpecification.hasCity(cities))
@@ -44,5 +45,17 @@ public class HotelService {
                 .and(HotelSpecification.hasRatingHigherOrEqual(lowerRatingLimit))
                 .and(HotelSpecification.hasRatingLowerOrEqual(upperRatingLimit)));
         return repository.findAll(spec);
+    }
+
+    private HotelDTO toDTO(Hotel hotel) {
+        HotelDTO dto = new HotelDTO();
+        dto.setId(hotel.getId());
+        dto.setName(hotel.getName());
+        dto.setOwner(hotel.getOwner());
+        dto.setRegisterDate(hotel.getRegisterDate());
+        dto.setCountry(hotel.getCountry());
+        dto.setCity(hotel.getCity());
+        dto.setAddress(hotel.getAddress());
+        return dto;
     }
 }

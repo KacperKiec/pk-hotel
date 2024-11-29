@@ -1,5 +1,7 @@
 package edu.zespol5.pkhotelbackend.model;
 
+import edu.zespol5.pkhotelbackend.model.hotel.Hotel;
+import edu.zespol5.pkhotelbackend.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 

@@ -6,6 +6,8 @@ import edu.zespol5.pkhotelbackend.repository.extra.ExtraSpecification;
 import edu.zespol5.pkhotelbackend.model.Extra;
 import edu.zespol5.pkhotelbackend.exception.ReservationNotFoundException;
 import edu.zespol5.pkhotelbackend.repository.reservation.ReservationRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,9 @@ public class ExtraService {
         return repository.save(extra);
     }
 
+    public Page<Extra> getAllExtras(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
     public Extra getExtraById(int id) {
         return repository.findExtraById(id).orElseThrow(
                 () -> new ExtraNotFoundException("Extra with id " + id + " was not found")
@@ -38,14 +43,10 @@ public class ExtraService {
         return repository.findExtrasByReservationId(reservationId);
     }
 
-    public List<Extra> getAllExtras() {
-        return repository.findAll();
-    }
-
     public List<Extra> getExtrasBy(
             String name,
-            double upperPriceLimit,
-            double lowerPriceLimit) {
+            Double upperPriceLimit,
+            Double lowerPriceLimit) {
         Specification<Extra> spec = Specification.where(ExtraSpecification.hasName(name))
                 .and(ExtraSpecification.hasPriceGreaterOrEqualThan(lowerPriceLimit))
                 .and(ExtraSpecification.hasPriceLessOrEqualThan(upperPriceLimit));

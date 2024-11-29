@@ -1,7 +1,7 @@
 package edu.zespol5.pkhotelbackend.model.connectors;
 
 import edu.zespol5.pkhotelbackend.model.Extra;
-import edu.zespol5.pkhotelbackend.model.Reservation;
+import edu.zespol5.pkhotelbackend.model.reservation.Reservation;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,7 +1,7 @@
 package edu.zespol5.pkhotelbackend.repository.reservation;
 
-import edu.zespol5.pkhotelbackend.model.Reservation;
-import edu.zespol5.pkhotelbackend.model.ReservationStatus;
+import edu.zespol5.pkhotelbackend.model.reservation.Reservation;
+import edu.zespol5.pkhotelbackend.model.reservation.ReservationStatus;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ReservationSpecification {

@@ -1,7 +1,7 @@
 package edu.zespol5.pkhotelbackend.model.connectors;
 
 import edu.zespol5.pkhotelbackend.model.Convenience;
-import edu.zespol5.pkhotelbackend.model.Room;
+import edu.zespol5.pkhotelbackend.model.room.Room;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

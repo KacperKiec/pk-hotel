@@ -1,9 +1,9 @@
 package edu.zespol5.pkhotelbackend.repository.room;
 
-import edu.zespol5.pkhotelbackend.model.Reservation;
-import edu.zespol5.pkhotelbackend.model.ReservationStatus;
-import edu.zespol5.pkhotelbackend.model.Room;
-import edu.zespol5.pkhotelbackend.model.RoomStandard;
+import edu.zespol5.pkhotelbackend.model.reservation.Reservation;
+import edu.zespol5.pkhotelbackend.model.reservation.ReservationStatus;
+import edu.zespol5.pkhotelbackend.model.room.Room;
+import edu.zespol5.pkhotelbackend.model.room.RoomStandard;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -19,7 +19,7 @@ public class RoomSpecification {
         };
     }
 
-    public static Specification<Room> hasPriceGreaterOrEqualThan(Integer price) {
+    public static Specification<Room> hasPriceGreaterOrEqualThan(Double price) {
         return (root, query, builder) -> {
             if(price == null) {
                 return builder.conjunction();
@@ -28,7 +28,7 @@ public class RoomSpecification {
         };
     }
 
-    public static Specification<Room> hasPriceLessOrEqualThan(Integer price) {
+    public static Specification<Room> hasPriceLessOrEqualThan(Double price) {
         return (root, query, builder) -> {
             if(price == null) {
                 return builder.conjunction();

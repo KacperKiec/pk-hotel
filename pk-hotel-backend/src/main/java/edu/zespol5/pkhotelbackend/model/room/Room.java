@@ -1,7 +1,12 @@
-package edu.zespol5.pkhotelbackend.model;
+package edu.zespol5.pkhotelbackend.model.room;
 
+import edu.zespol5.pkhotelbackend.model.connectors.RoomConvenience;
+import edu.zespol5.pkhotelbackend.model.hotel.Hotel;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -24,6 +29,9 @@ public class Room {
     @Enumerated(EnumType.STRING)
     private RoomStandard standard;
     private String description;
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<RoomConvenience> conveniences = new HashSet<>();
 
     public Room(){
 

@@ -1,55 +1,95 @@
 package edu.zespol5.pkhotelbackend.service;
 
+import edu.zespol5.pkhotelbackend.exception.ConvenienceNotFoundException;
 import edu.zespol5.pkhotelbackend.exception.HotelNotFoundException;
+import edu.zespol5.pkhotelbackend.model.Convenience;
+import edu.zespol5.pkhotelbackend.model.connectors.RoomConvenience;
+import edu.zespol5.pkhotelbackend.model.room.RoomDTO;
+import edu.zespol5.pkhotelbackend.repository.convenience.ConvenienceRepository;
 import edu.zespol5.pkhotelbackend.repository.hotel.HotelRepository;
-import edu.zespol5.pkhotelbackend.model.Room;
-import edu.zespol5.pkhotelbackend.model.RoomStandard;
+import edu.zespol5.pkhotelbackend.model.room.Room;
+import edu.zespol5.pkhotelbackend.model.room.RoomStandard;
 import edu.zespol5.pkhotelbackend.exception.RoomNotFoundException;
+import edu.zespol5.pkhotelbackend.repository.review.ReviewRepository;
 import edu.zespol5.pkhotelbackend.repository.room.RoomRepository;
 import edu.zespol5.pkhotelbackend.repository.room.RoomSpecification;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class RoomService {
-    private final RoomRepository repository;
+    private final RoomRepository roomRepository;
     private final HotelRepository hotelRepository;
+    private final ConvenienceRepository convenienceRepository;
+    private final ReviewRepository reviewRepository;
 
-    public RoomService(RoomRepository repository, HotelRepository hotelRepository) {
-        this.repository = repository;
+    public RoomService(RoomRepository roomRepository, HotelRepository hotelRepository, ConvenienceRepository convenienceRepository, ReviewRepository reviewRepository) {
+        this.roomRepository = roomRepository;
         this.hotelRepository = hotelRepository;
+        this.convenienceRepository = convenienceRepository;
+        this.reviewRepository = reviewRepository;
     }
 
-    public Room save(Room room) {
-        return repository.save(room);
+    public RoomDTO saveRoom(Room room) {
+        hotelRepository.findHotelById(room.getHotel().getId()).orElseThrow(
+                () -> new HotelNotFoundException("Hotel not found")
+        );
+        return toDTO(roomRepository.save(room));
     }
 
-    public Room getRoomById(int hotelId, int roomNr) {
+    @Transactional
+    public RoomDTO addConveniences(Room room, List<Integer> convenienceIds) {
+        var existingRoom = roomRepository.findRoomByHotel_IdAndRoomNr(room.getHotel().getId(), room.getRoomNr()).orElseThrow(
+                () -> new RoomNotFoundException("Room not found")
+        );
+
+        Set<RoomConvenience> conveniences = new HashSet<>();
+
+        for (Integer convenienceId : convenienceIds) {
+            var conv = convenienceRepository.findConvenienceById(convenienceId).orElseThrow(
+                    () -> new ConvenienceNotFoundException("Convenience not found")
+            );
+            RoomConvenience roomConvenience = new RoomConvenience();
+            roomConvenience.setRoom(existingRoom);
+            roomConvenience.setConvenience(conv);
+
+            conveniences.add(roomConvenience);
+        }
+
+        existingRoom.setConveniences(conveniences);
+        return toDTO(roomRepository.save(existingRoom));
+    }
+
+    public RoomDTO getRoomById(int hotelId, int roomNr) {
         hotelRepository.findHotelById(hotelId).orElseThrow(
                 () -> new HotelNotFoundException("Hotel with id " + hotelId + " was not found")
         );
-        return repository.findRoomByHotel_IdAndRoomNr(hotelId, roomNr).orElseThrow(
+        return toDTO(roomRepository.findRoomByHotel_IdAndRoomNr(hotelId, roomNr).orElseThrow(
                 () -> new RoomNotFoundException("Room with id " + hotelId + "/" +roomNr + " was not found")
-        );
+        ));
     }
 
-    public Page<Room> getAllRooms(Pageable pageable){
-        return repository.findAll(pageable);
+    public Page<RoomDTO> getAllRooms(Pageable pageable){
+        return roomRepository.findAll(pageable).map(this::toDTO);
     }
 
-    public List<Room> getRoomsBy(
-            int hotelId,
-            int lowerPriceLimit,
-            int upperPriceLimit,
+    public Page<RoomDTO> getRoomsBy(
+            Integer hotelId,
+            Double lowerPriceLimit,
+            Double upperPriceLimit,
             RoomStandard standard,
-            int places,
+            Integer places,
             LocalDate startDate,
-            LocalDate endDate) {
+            LocalDate endDate,
+            Pageable pageable) {
 
         hotelRepository.findHotelById(hotelId).orElseThrow(
                 () -> new HotelNotFoundException("Hotel with id " + hotelId + " was not found")
@@ -61,6 +101,20 @@ public class RoomService {
                 .and(RoomSpecification.hasPriceGreaterOrEqualThan(lowerPriceLimit))
                 .and(RoomSpecification.hasStandard(standard))
                 .and(RoomSpecification.isAvailable(startDate, endDate));
-        return repository.findAll(spec);
+        return roomRepository.findAll(spec, pageable).map(this::toDTO);
+    }
+
+    private RoomDTO toDTO(Room room) {
+        RoomDTO dto = new RoomDTO();
+        dto.setRoomNr(room.getRoomNr());
+        dto.setHotelName(room.getHotel().getName());
+        dto.setPlaces(room.getPlaces());
+        dto.setPrice(room.getPrice());
+        dto.setStandard(room.getStandard());
+        dto.setDescription(room.getDescription());
+        dto.setConveniences(convenienceRepository.findConvenienceByRoomId(room.getRoomNr(), room.getHotel().getId()));
+        dto.setRating(reviewRepository.findAverageRatingByHotelId(room.getHotel().getId()));
+
+        return dto;
     }
 }

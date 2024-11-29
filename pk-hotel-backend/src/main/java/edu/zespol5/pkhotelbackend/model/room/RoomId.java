@@ -1,4 +1,4 @@
-package edu.zespol5.pkhotelbackend.model;
+package edu.zespol5.pkhotelbackend.model.room;
 
 import lombok.Getter;
 import lombok.Setter;
