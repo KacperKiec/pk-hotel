@@ -1,0 +1,35 @@
+.card-content {
+  display: flex;          /* Use Flexbox for layout */
+  align-items: flex-start; /* Align items at the top */
+  gap: 1rem;              /* Space between image and text */
+}
+
+.room-image {
+  width: 300px;          /* Set a fixed width for the image */
+  height: 300px;          /* Maintain the aspect ratio */
+  flex-shrink: 0;        /* Prevent the image from shrinking */
+}
+
+.room-info {
+  flex: 1;               /* Allow the text to take the remaining space */
+  overflow: hidden;      /* Prevent content overflow */
+}
+
+.desc {
+  word-wrap: break-word;    /* Break long words to wrap properly */
+  white-space: normal;      /* Ensure text wraps to fit the container */
+  overflow-wrap: anywhere;  /* Break unspaced text if needed */
+}
+
+@media (max-width: 600px) {
+  .card-content {
+    flex-direction: column; /* Stack image and text vertically on small screens */
+  }
+
+  .room-image {
+    width: 100%;            /* Make the image responsive */
+    max-width: 300px;       /* Optional: Limit the maximum size */
+    margin: 0 auto;         /* Center the image */
+  }
+}
+

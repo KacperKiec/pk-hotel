@@ -1,0 +1,18 @@
+.sort-by-button {
+  --universal-border-radius: 40px;
+  position: relative;
+  width: 100px;
+  height: 40px;
+}
+
+.sort-text {
+  position: absolute;
+  top: 7px;
+  left: 14px;
+}
+
+.arrows {
+  position: absolute;
+  top: 7px;
+  right: 5px;
+}

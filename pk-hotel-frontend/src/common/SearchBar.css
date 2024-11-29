@@ -1,0 +1,47 @@
+.form-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.date {
+  position: absolute;
+  border: 1px solid darkgrey;
+  padding: 5px;
+  border-radius: 10px;
+  right: 405px;
+  background-color: white;
+}
+
+.icons {
+  font-size: 1.2em;
+}
+
+form {
+  padding: 4px;
+  width: 1200px;
+}
+
+.place {
+  font-size: 1em;
+  padding: 6px 12px;
+  margin: 6.5px;
+}
+
+.container {
+  padding: 0px;
+}
+
+.button-group {
+  padding: 0px;
+}
+
+.search-button {
+  background-color: #275DAD;
+  transition: backgroud-color 0.3s ease;
+}
+
+.search-button:hover {
+  background-color: rgb(46, 85, 129);
+}
+

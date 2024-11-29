@@ -1,0 +1,93 @@
+{ "rooms" : [
+    {
+      "hotelId": 1,
+      "roomNr": 101,
+      "name": "Ocean View Suite",
+      "standard": "Apartament",
+      "capacity": 4,
+      "description": "A luxurious suite with a breathtaking view of the ocean.",
+      "price": 250
+    },
+    {
+      "hotelId": 2,
+      "roomNr": 202,
+      "name": "Downtown King Room",
+      "standard": "Hotel",
+      "capacity": 2,
+      "description": "A modern room located in the heart of the city with king-size bed.",
+      "price": 120
+    },
+    {
+      "hotelId": 3,
+      "roomNr": 303,
+      "name": "Cozy Hostel Room",
+      "standard": "Hostel",
+      "capacity": 6,
+      "description": "An affordable and comfortable dormitory-style room.",
+      "price": 25
+    },
+    {
+      "hotelId": 4,
+      "roomNr": 404,
+      "name": "Country Homestay",
+      "standard": "Homestays",
+      "capacity": 3,
+      "description": "Experience a home-like stay in the countryside with family-style hospitality.",
+      "price": 70
+    },
+    {
+      "hotelId": 5,
+      "roomNr": 505,
+      "name": "Luxury Presidential Suite",
+      "standard": "Apartament",
+      "capacity": 6,
+      "description": "A grand suite with top-notch amenities and services, ideal for high-profile guests.",
+      "price": 500
+    },
+    {
+      "hotelId": 6,
+      "roomNr": 606,
+      "name": "Comfortable Queen Room",
+      "standard": "Hotel",
+      "capacity": 2,
+      "description": "A cozy room perfect for couples or solo travelers, featuring a queen-size bed.",
+      "price": 100
+    },
+    {
+      "hotelId": 7,
+      "roomNr": 707,
+      "name": "Budget Hostel Bed",
+      "standard": "Hostel",
+      "capacity": 1,
+      "description": "A simple and affordable bed in a shared room, ideal for backpackers.",
+      "price": 15
+    },
+    {
+      "hotelId": 8,
+      "roomNr": 808,
+      "name": "Peaceful Garden Homestay",
+      "standard": "Homestays",
+      "capacity": 4,
+      "description": "Relax and rejuvenate in a serene homestay surrounded by nature.",
+      "price": 90
+    },
+    {
+      "hotelId": 9,
+      "roomNr": 909,
+      "name": "Penthouse Suite",
+      "standard": "Apartament",
+      "capacity": 5,
+      "description": "An opulent penthouse suite with panoramic city views and exclusive amenities.",
+      "price": 400
+    },
+    {
+      "hotelId": 10,
+      "roomNr": 1010,
+      "name": "Economy Double Room",
+      "standard": "Hotel",
+      "capacity": 2,
+      "description": "A budget-friendly double room with essential comforts for travelers.",
+      "price": 80
+    }
+  ]
+}
