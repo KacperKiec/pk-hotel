@@ -30,6 +30,7 @@ export class Room {
     if (initializer.description) this._description = initializer.description;
     if (initializer.price) this._price = initializer.price;
     if (initializer.imageUrl) this._imageUrl = initializer.imageUrl;
+    if (initializer.reviews) this._reviews = initializer.reviews;
   }
 
   // Getters and setters for encapsulated fields
@@ -90,10 +91,10 @@ export class Room {
   }
 
   get reviews(): number | undefined{
-    return this._reviews
+    return this._reviews;
   }
 
-  set reviews(value: number){
+  set reviews(value: number | undefined){
     this.reviews = value;
   }
 }
