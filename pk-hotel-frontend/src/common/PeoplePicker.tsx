@@ -8,7 +8,7 @@ export const PeoplePicker = () => {
             <label 
                 htmlFor="adults"
                 style={{marginLeft: "12px"}}
-            >Adults: 1</label>
+            >Adults: </label>
             <input 
                 type="number" 
                 style={{
@@ -17,7 +17,7 @@ export const PeoplePicker = () => {
                     marginRight: "115px",
                     height: "26px",
             }}/>
-            <label htmlFor="children">Children: 1</label>
+            <label htmlFor="children">Children: </label>
             <input 
                 type="number" 
                 style={{

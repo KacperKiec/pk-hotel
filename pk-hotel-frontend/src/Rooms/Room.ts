@@ -12,6 +12,7 @@ export class Room {
   private _description: string = '';
   private _price: number | undefined;
   private _imageUrl: string = '';
+  private _reviews: number | undefined;
 
   // Getter for checking if the room is new
   get isNew(): boolean {
@@ -86,6 +87,14 @@ export class Room {
   }
   set imageUrl(value: string) {
     this._imageUrl = value;
+  }
+
+  get reviews(): number | undefined{
+    return this._reviews
+  }
+
+  set reviews(value: number){
+    this.reviews = value;
   }
 }
 

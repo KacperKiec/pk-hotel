@@ -10,7 +10,7 @@ const Header = () => {
           <NavLink to="/" className="logo col-sm-12">
           Hote<mark>love</mark>
           </NavLink>
-          <NavLink to="/log-in" className="button rounded">
+          <NavLink to="/login" className="button rounded">
             <span className="icon-user inverse"></span>
           </NavLink>
         </div>

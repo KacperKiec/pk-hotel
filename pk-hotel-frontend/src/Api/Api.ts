@@ -1,7 +1,7 @@
 import { User, transformUser } from '../Users/User'
 const baseUrl = 'http://localhost:8080'
 
-interface RegisterResponse {
+export interface RegisterResponse {
    succes: boolean,
    user?: User
 }
@@ -22,9 +22,10 @@ export const registerAPI = async (user: User): Promise<RegisterResponse> => {
          throw new Error(`Registration failed ${response.statusText}`);
       }
       
-      const regiserResponse: RegisterResponse = await response.json();
-      console.log(regiserResponse);
-      return regiserResponse;
+      const registerResponse: RegisterResponse = await response.json();
+      registerResponse.succes = true;
+      console.log(registerResponse);
+      return registerResponse;
    } catch(error){
       return {
          succes: false
