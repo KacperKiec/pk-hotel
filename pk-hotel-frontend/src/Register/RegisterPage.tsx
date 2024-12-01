@@ -3,13 +3,20 @@ import './style.css';
 import 'boxicons/css/boxicons.min.css';
 import InputField from '../common/InputField';
 import { Link } from 'react-router-dom';
+import { registerAPI } from '../Api/Api';
+import { User, Role } from '../Users/User';
+
 
 const RegisterPage: React.FC = () => {
+  const role: Role = 'CLIENT';
   const [formData, setFormData] = useState({
     email: '',
-    username: '',
+    name: '',
+    surname: '',
     password: '',
     confirmPassword: '',
+    birthDate: '',
+    role
   });
 
   const [passwordsNotMatch, setPasswordsNotMatch] = useState(false);
@@ -28,13 +35,20 @@ const RegisterPage: React.FC = () => {
     if(formData.password !== formData.confirmPassword){
       setFormData(prev => ({
         email: '',
-        username: '',
+        name: '',
+        surname: '',
         password: '',
         confirmPassword: '',
+        birthDate: '',
+        role
       }));
       setPasswordsNotMatch(true);
       return;
     }
+    const user: User = new User({name: formData.name, surname: formData.surname, 
+      email: formData.email, password: formData.password, birthDate: formData.birthDate,
+      role: formData.role}) 
+    registerAPI(user);
   };
 
   return (
@@ -46,11 +60,21 @@ const RegisterPage: React.FC = () => {
           {/* Reusing InputField Component for Username */}
           <InputField
             type="text"
-            name="username"
-            id="username"
-            placeholder="Username"
+            name="name"
+            id="name"
+            placeholder="Name"
             iconClass="bx bxs-user"
-            value={formData.username}
+            value={formData.name}
+            onChange={handleInputChange}
+          />
+
+          <InputField
+            type="text"
+            name="surname"
+            id="surname"
+            placeholder="Surname"
+            iconClass="bx bxs-user"
+            value={formData.surname}
             onChange={handleInputChange}
           />
 
@@ -63,6 +87,16 @@ const RegisterPage: React.FC = () => {
             iconClass="bx bxs-envelope"
             onChange={handleInputChange}
             value={formData.email}
+          />
+
+          <InputField
+            type="text"
+            name="birthDate"
+            id="birthDate"
+            placeholder="Birth date"
+            iconClass="bx bxs-user"
+            value={formData.birthDate}
+            onChange={handleInputChange}
           />
 
           {/* Reusing InputField Component for Password */}

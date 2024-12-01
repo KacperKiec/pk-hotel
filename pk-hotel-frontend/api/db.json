@@ -89,5 +89,67 @@
       "description": "A budget-friendly double room with essential comforts for travelers.",
       "price": 80
     }
+  ],
+  "users" : [
+    {
+      "id": 1,
+      "username": "john_doe",
+      "password": "password123",
+      "email": "john.doe@example.com"
+    },
+    {
+      "id": 2,
+      "username": "jane_smith",
+      "password": "securepass456",
+      "email": "jane.smith@example.com"
+    },
+    {
+      "id": 3,
+      "username": "mike_jones",
+      "password": "mike2023",
+      "email": "mike.jones@example.com"
+    },
+    {
+      "id": 4,
+      "username": "sarah_connor",
+      "password": "terminator123",
+      "email": "sarah.connor@example.com"
+    },
+    {
+      "id": 5,
+      "username": "alice_wonder",
+      "password": "alice@123",
+      "email": "alice.wonderland@example.com"
+    },
+    {
+      "id": 6,
+      "username": "bob_builder",
+      "password": "canwefixit",
+      "email": "bob.builder@example.com"
+    },
+    {
+      "id": 7,
+      "username": "charlie_brown",
+      "password": "peanuts2023",
+      "email": "charlie.brown@example.com"
+    },
+    {
+      "id": 8,
+      "username": "diana_prince",
+      "password": "wonderwoman",
+      "email": "diana.prince@example.com"
+    },
+    {
+      "id": 9,
+      "username": "bruce_wayne",
+      "password": "batman123",
+      "email": "bruce.wayne@example.com"
+    },
+    {
+      "id": 10,
+      "username": "clark_kent",
+      "password": "superman",
+      "email": "clark.kent@example.com"
+    }
   ]
 }

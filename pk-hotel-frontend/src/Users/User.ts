@@ -1,17 +1,37 @@
+export type Role = "ADMIN" | "CLIENT";
+
 export class User {
     // Private properties
     private _id: number | undefined;
-    private _username: string;
+    private _name: string;
+    private _surname: string;
     private _password: string;
     private _email: string;
+    private _role: Role;
+    private _birthDate: string;
   
     // Constructor to initialize the User
     constructor(initializer: Omit<User, 'id'> & Partial<Pick<User, 'id'>>) {
-      this._username = initializer.username;
+      this._name = initializer.name;
+      this._surname = initializer.surname;
       this._password = initializer.password;
       this._email = initializer.email;
+      this._role = initializer.role;
+      this._birthDate = initializer.birthDate;
     }
   
+    public get surname(): string {
+      return this._surname;
+    }
+  
+    public set surname(value: string) {
+      if (value.trim().length === 0) {
+        throw new Error("Username cannot be empty");
+      }
+      this._surname = value;
+    }
+  
+
     // Getter and setter for id
     public get id(): number | undefined {
       return this._id;
@@ -22,15 +42,15 @@ export class User {
     }
   
     // Getter and setter for username
-    public get username(): string {
-      return this._username;
+    public get name(): string {
+      return this._name;
     }
   
-    public set username(value: string) {
+    public set name(value: string) {
       if (value.trim().length === 0) {
         throw new Error("Username cannot be empty");
       }
-      this._username = value;
+      this._name = value;
     }
   
     // Getter and setter for password (typically, you'd avoid exposing password directly)
@@ -57,5 +77,40 @@ export class User {
       }
       this._email = value;
     }
+
+    public get role():  Role{
+      return this._role;
+    }
+
+    public set role(role: Role){
+      this._role = role;
+    }
+
+    public get birthDate(): string {
+      return this._birthDate;
+    }
+
+    public set birthDate(birthDate: string){
+      this._birthDate = birthDate;
+    }
   }
   
+type UserDTO = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: string;
+  birthDate: string;
+};
+
+export const transformUser = (user: any): UserDTO => {
+  return {
+    firstName: user._name,
+    lastName: user._surname,
+    email: user._email,
+    password: user._password,
+    role: user._role,
+    birthDate: user._birthDate,
+  };
+};
