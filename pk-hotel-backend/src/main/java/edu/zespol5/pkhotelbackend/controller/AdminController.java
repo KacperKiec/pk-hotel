@@ -2,6 +2,7 @@ package edu.zespol5.pkhotelbackend.controller;
 
 import edu.zespol5.pkhotelbackend.model.Convenience;
 import edu.zespol5.pkhotelbackend.model.Extra;
+import edu.zespol5.pkhotelbackend.model.connectors.RoomConvenienceRequestDTO;
 import edu.zespol5.pkhotelbackend.model.hotel.Hotel;
 import edu.zespol5.pkhotelbackend.model.hotel.HotelDTO;
 import edu.zespol5.pkhotelbackend.model.room.Room;
@@ -48,8 +49,8 @@ public class AdminController {
     }
 
     @PatchMapping(value = "/room-conveniences")
-    public ResponseEntity<RoomDTO> addRoomConveniences(@RequestBody Room room, @RequestBody List<Integer> conveniencesIds) {
-        var result = roomService.addConveniences(room, conveniencesIds);
+    public ResponseEntity<RoomDTO> addRoomConveniences(@RequestBody RoomConvenienceRequestDTO param) {
+        var result = roomService.addConveniences(param.getRoom(), param.getConveniencesIds());
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

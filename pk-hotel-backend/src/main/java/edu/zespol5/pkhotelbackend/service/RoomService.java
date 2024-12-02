@@ -4,7 +4,9 @@ import edu.zespol5.pkhotelbackend.exception.ConvenienceNotFoundException;
 import edu.zespol5.pkhotelbackend.exception.HotelNotFoundException;
 import edu.zespol5.pkhotelbackend.model.Convenience;
 import edu.zespol5.pkhotelbackend.model.connectors.RoomConvenience;
+import edu.zespol5.pkhotelbackend.model.connectors.RoomConvenienceId;
 import edu.zespol5.pkhotelbackend.model.room.RoomDTO;
+import edu.zespol5.pkhotelbackend.model.room.RoomId;
 import edu.zespol5.pkhotelbackend.repository.convenience.ConvenienceRepository;
 import edu.zespol5.pkhotelbackend.repository.hotel.HotelRepository;
 import edu.zespol5.pkhotelbackend.model.room.Room;
@@ -51,20 +53,16 @@ public class RoomService {
                 () -> new RoomNotFoundException("Room not found")
         );
 
-        Set<RoomConvenience> conveniences = new HashSet<>();
 
         for (Integer convenienceId : convenienceIds) {
             var conv = convenienceRepository.findConvenienceById(convenienceId).orElseThrow(
                     () -> new ConvenienceNotFoundException("Convenience not found")
             );
-            RoomConvenience roomConvenience = new RoomConvenience();
-            roomConvenience.setRoom(existingRoom);
-            roomConvenience.setConvenience(conv);
 
-            conveniences.add(roomConvenience);
+            RoomConvenience roomConvenience = new RoomConvenience(room, conv);
+            existingRoom.addConvenience(roomConvenience);
         }
 
-        existingRoom.setConveniences(conveniences);
         return toDTO(roomRepository.save(existingRoom));
     }
 
