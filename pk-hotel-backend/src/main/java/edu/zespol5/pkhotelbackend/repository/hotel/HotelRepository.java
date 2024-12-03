@@ -11,4 +11,5 @@ public interface HotelRepository {
     Optional<Hotel> findHotelById(int id);
     List<Hotel> findAll();
     List<Hotel> findAll(Specification<Hotel> spec);
+    void deleteById(int id);
 }

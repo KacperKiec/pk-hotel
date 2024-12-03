@@ -66,6 +66,23 @@ public class RoomService {
         return toDTO(roomRepository.save(existingRoom));
     }
 
+    @Transactional
+    public void removeConvenience(Room room, int convenienceId) {
+        var existingRoom = roomRepository.findRoomByHotel_IdAndRoomNr(room.getHotel().getId(), room.getRoomNr()).orElseThrow(
+                () -> new RoomNotFoundException("Room not found")
+        );
+
+        var convenience = existingRoom.getConveniences().stream()
+                .filter(conv -> conv.getConvenience().getId() == convenienceId)
+                .findFirst()
+                .orElseThrow(
+                        () -> new ConvenienceNotFoundException("Convenience not found")
+                );
+
+        existingRoom.removeConvenience(convenience);
+        roomRepository.save(existingRoom);
+    }
+
     public RoomDTO getRoomById(int hotelId, int roomNr) {
         hotelRepository.findHotelById(hotelId).orElseThrow(
                 () -> new HotelNotFoundException("Hotel with id " + hotelId + " was not found")

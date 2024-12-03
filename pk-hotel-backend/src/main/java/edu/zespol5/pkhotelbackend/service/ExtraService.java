@@ -30,6 +30,14 @@ public class ExtraService {
     public Page<Extra> getAllExtras(Pageable pageable) {
         return repository.findAll(pageable);
     }
+
+    public void deleteExtra(Extra extra) {
+        if(!repository.findExtraById(extra.getId()).isPresent()) {
+            throw new ExtraNotFoundException("Extra with id " + extra.getId() + " not found");
+        }
+        repository.deleteById(extra.getId());
+    }
+
     public Extra getExtraById(int id) {
         return repository.findExtraById(id).orElseThrow(
                 () -> new ExtraNotFoundException("Extra with id " + id + " was not found")

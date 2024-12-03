@@ -19,10 +19,12 @@ public class SecurityConfig {
 
     private final LoginSuccessHandler loginSuccessHandler;
     private final LogoutSuccessHandler logoutSuccessHandler;
+    private final AuthenticationFailureHandler authenticationFailureHandler;
 
-    public SecurityConfig(LoginSuccessHandler loginSuccessHandler, LogoutSuccessHandler logoutSuccessHandler) {
+    public SecurityConfig(LoginSuccessHandler loginSuccessHandler, LogoutSuccessHandler logoutSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler) {
         this.loginSuccessHandler = loginSuccessHandler;
         this.logoutSuccessHandler = logoutSuccessHandler;
+        this.authenticationFailureHandler = authenticationFailureHandler;
     }
 
     @Bean
@@ -55,8 +57,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers("/user").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().permitAll()
-                )
+                        .anyRequest().permitAll())
+                .exceptionHandling(handler -> handler
+                        .authenticationEntryPoint(authenticationFailureHandler))
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
     }

@@ -13,4 +13,5 @@ public interface ReservationRepository {
     Optional<Reservation> findReservationById(int id);
     List<Reservation> findAll();
     Page<Reservation> findAll(Specification<Reservation> spec, Pageable pageable);
+    void deleteById(int id);
 }

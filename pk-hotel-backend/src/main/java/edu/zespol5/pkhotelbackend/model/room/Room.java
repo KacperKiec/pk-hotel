@@ -40,4 +40,8 @@ public class Room {
     public void addConvenience(RoomConvenience roomConvenience){
         conveniences.add(roomConvenience);
     }
+
+    public void removeConvenience(RoomConvenience roomConvenience){
+        conveniences.remove(roomConvenience);
+    }
 }
