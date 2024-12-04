@@ -60,6 +60,16 @@ export const SearchBar = () => {
     };
   }, []);
 
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const {name, value} = e.target;
+    
+    if(name === 'arrivalDate') setArrivalDate(value);
+    if(name === 'departureDate') setDepatureDate(value);
+    if(name === 'adults') setAdults(Number(value));
+    if(name === 'children') setChildren(Number(value));
+    console.log(value);
+  }
+
   return (
     <div className="form-container">
       <form action="input-group horizontal">
@@ -86,12 +96,20 @@ export const SearchBar = () => {
         </div>
         {isDatePickerVisible && (
           <div className="date" ref={datePickerRef}>
-            <DatePicker />
+            <DatePicker 
+              arrivalDate={arrivalDate} 
+              departureDate={departureDate} 
+              onChange={onInputChange}
+            />
           </div>
         )}
         {isPeopleCountVisible && (
           <div className="date people" ref={peoplePickerRef}>
-            <PeoplePicker />
+            <PeoplePicker
+              adultsValue={adults}
+              childrenValue={children}
+              onChange={onInputChange}
+            />
           </div>
         )}
       </form>

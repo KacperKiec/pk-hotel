@@ -1,11 +1,12 @@
 import React from 'react'
 
 interface DatePickerProps {
-  value: string,
-  onChange: (e: any) => void, 
+  arrivalDate: string,
+  departureDate: string,
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, 
 }
 
-const DatePicker = ({value, onChange}: DatePickerProps) => {
+const DatePicker = ({arrivalDate, departureDate, onChange}: DatePickerProps) => {
   return (
     <div className='input-group horizontal'>
       <div className="row" style={{position: "relative"}}>
@@ -20,14 +21,22 @@ const DatePicker = ({value, onChange}: DatePickerProps) => {
       <div className="row">
         <input 
           type="date" 
-          name='arrivaleDate' 
-          value={value}
+          name='arrivalDate' 
+          value={arrivalDate}
           onChange={onChange}
           style={{
             width: "248px", 
             zIndex: 1000}}
           />
-        <input type="date" name="departureDate" style={{width: "248px", zIndex: 1000}}/>
+        <input
+          type="date"
+          name="departureDate" 
+          value={departureDate}
+          onChange={onChange}
+          style={{
+            width: "248px", 
+            zIndex: 1000}}
+          />
       </div>
    </div>
  )

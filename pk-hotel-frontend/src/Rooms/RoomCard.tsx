@@ -18,8 +18,17 @@ const RoomCard = ({ room }: RoomCardProps) => {
             </h5>
             <p>Standard: {room.standard}</p>
             <p>Capacity: {room.capacity}</p>
-            <p className="desc">Description: {room.description}</p>
-            <p>Price: {room.price}</p>
+            <p className="desc">
+              Description: {room.description.length>150 ? room.description.substring(0, 140) + '...': room.description}
+              </p>
+            <div className='price-tag'>
+              <mark className='tertiary'>
+                  Price
+              </mark>
+              <span className='price-value'>
+                {room.price}  
+              </span> 
+            </div>
           </section>
         </div>
       </div>

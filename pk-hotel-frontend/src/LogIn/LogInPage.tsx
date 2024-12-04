@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import './style.css';
 import 'boxicons/css/boxicons.min.css';
 import InputField from '../common/InputField'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { LoginData, Response, loginApi } from '../Api/Api';
 
 const LogInPage: React.FC = () => {
   // State to manage input values
@@ -10,6 +11,8 @@ const LogInPage: React.FC = () => {
     email: '',
     password: ''
   });
+
+  const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = e.target;
@@ -19,8 +22,18 @@ const LogInPage: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();    
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); 
+    const response: Response = await loginApi({
+      email: formData.email, 
+      password: formData.password
+    });   
+    if(response.succes){
+      navigate("/");
+    }
+    else{
+      console.log("Unable to login")
+    }
   };
 
   return (

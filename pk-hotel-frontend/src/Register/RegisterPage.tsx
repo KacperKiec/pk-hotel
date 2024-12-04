@@ -3,7 +3,7 @@ import './style.css';
 import 'boxicons/css/boxicons.min.css';
 import InputField from '../common/InputField';
 import { Link, useNavigate } from 'react-router-dom';
-import { RegisterResponse, registerAPI } from '../Api/Api';
+import { Response, registerAPI } from '../Api/Api';
 import { User, Role } from '../Users/User';
 
 
@@ -49,7 +49,7 @@ const RegisterPage: React.FC = () => {
       email: formData.email, password: formData.password, birthDate: formData.birthDate,
       role: formData.role});
       
-    const registerResponse: RegisterResponse = await registerAPI(user);
+    const registerResponse: Response = await registerAPI(user);
     if(!registerResponse.succes){
       setFormData(prev => ({
         email: '',

@@ -7,7 +7,7 @@ export const MOCK_ROOMS: Room[] = [
     name: "Ocean View Suite",
     standard: "Apartament" as Standard,
     capacity: 4,
-    description: "A luxurious suite with a breathtaking view of the ocean.",
+    description: "A luxurious suite with a breathtaking view of the ocean elllllllllllllllllllll ooooooooo kureaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaawwaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.",
     price: 250,
     imageUrl: "/assets/room1.jpg",
   }),

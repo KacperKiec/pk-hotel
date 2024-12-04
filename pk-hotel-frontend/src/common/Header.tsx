@@ -7,7 +7,7 @@ const Header = () => {
     <header className="sticky">
       <div className="container">
         <div className="row">
-          <NavLink to="/" className="logo col-sm-12">
+          <NavLink to="/" className="logo col-sm">
           Hote<mark>love</mark>
           </NavLink>
           <NavLink to="/login" className="button rounded">

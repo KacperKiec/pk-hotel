@@ -1,13 +1,18 @@
 import { User, transformUser } from '../Users/User'
 const baseUrl = 'http://localhost:8080'
 
-export interface RegisterResponse {
+export interface Response {
    succes: boolean,
    user?: User
 }
 
+export interface LoginData {
+   email: string,
+   password: string
+}
+
 // Register API
-export const registerAPI = async (user: User): Promise<RegisterResponse> => {
+export const registerAPI = async (user: User): Promise<Response> => {
    try{
       const response = await fetch(`${baseUrl}/register`, {
          method: "POST",
@@ -22,7 +27,7 @@ export const registerAPI = async (user: User): Promise<RegisterResponse> => {
          throw new Error(`Registration failed ${response.statusText}`);
       }
       
-      const registerResponse: RegisterResponse = await response.json();
+      const registerResponse: Response = await response.json();
       registerResponse.succes = true;
       console.log(registerResponse);
       return registerResponse;
@@ -30,5 +35,35 @@ export const registerAPI = async (user: User): Promise<RegisterResponse> => {
       return {
          succes: false
       };
+   }
+}
+
+
+export const loginApi = async (data: LoginData): Promise<Response> => {
+   const params = new URLSearchParams();
+   params.append('email', data.email);
+   params.append('password', data.password);
+
+   try{
+      const response = await fetch(`${baseUrl}/login`, {
+         method: 'POST',
+         headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+         },
+         body: params.toString(),
+         credentials: 'include',
+      });
+
+      if(!response.ok){
+         throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const loginResponse: Response = await response.json();
+      loginResponse.succes = true;
+      return loginResponse;
+   }
+   catch(error){
+      return{
+         succes: false
+      }
    }
 }
