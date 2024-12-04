@@ -1,6 +1,11 @@
 import React from 'react'
 
-const DatePicker = () => {
+interface DatePickerProps {
+  value: string,
+  onChange: (e: any) => void, 
+}
+
+const DatePicker = ({value, onChange}: DatePickerProps) => {
   return (
     <div className='input-group horizontal'>
       <div className="row" style={{position: "relative"}}>
@@ -13,7 +18,15 @@ const DatePicker = () => {
           }}>Departure</label>
       </div>
       <div className="row">
-        <input type="date" name='arrivaleDate' style={{width: "248px", zIndex: 1000}}/>
+        <input 
+          type="date" 
+          name='arrivaleDate' 
+          value={value}
+          onChange={onChange}
+          style={{
+            width: "248px", 
+            zIndex: 1000}}
+          />
         <input type="date" name="departureDate" style={{width: "248px", zIndex: 1000}}/>
       </div>
    </div>
