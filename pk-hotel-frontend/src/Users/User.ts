@@ -1,3 +1,5 @@
+import { UserInfo } from "os";
+
 export type Role = "ADMIN" | "CLIENT";
 
 export class User {
@@ -95,12 +97,12 @@ export class User {
     }
   }
   
-type UserDTO = {
+export type UserDTO = {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-  role: string;
+  role: Role;
   birthDate: string;
 };
 
@@ -113,4 +115,15 @@ export const transformUser = (user: any): UserDTO => {
     role: user._role,
     birthDate: user._birthDate,
   };
+};
+
+export const transformUserDTOToUser = (userDTO: UserDTO): User => {
+  return new User({
+    name: userDTO.firstName,
+    surname: userDTO.lastName,
+    password: userDTO.password,
+    email: userDTO.email,
+    role: userDTO.role,
+    birthDate: userDTO.birthDate,
+  });
 };

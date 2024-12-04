@@ -1,9 +1,9 @@
-import { User, transformUser } from '../Users/User'
+import { User, UserDTO, transformUser, transformUserDTOToUser } from '../Users/User'
 const baseUrl = 'http://localhost:8080'
 
 export interface Response {
    succes: boolean,
-   user?: User
+   user?: User 
 }
 
 export interface LoginData {
@@ -57,8 +57,11 @@ export const loginApi = async (data: LoginData): Promise<Response> => {
       if(!response.ok){
          throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const loginResponse: Response = await response.json();
-      loginResponse.succes = true;
+      const loggedUser: User = transformUserDTOToUser(await response.json());
+      let loginResponse: Response = {
+         succes: true,
+         user: loggedUser
+      };
       return loginResponse;
    }
    catch(error){

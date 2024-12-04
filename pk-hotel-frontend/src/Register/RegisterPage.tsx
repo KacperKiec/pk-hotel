@@ -5,6 +5,7 @@ import InputField from '../common/InputField';
 import { Link, useNavigate } from 'react-router-dom';
 import { Response, registerAPI } from '../Api/Api';
 import { User, Role } from '../Users/User';
+import { validateUserDetails } from '../Users/ValidateUserDetails';
 
 
 const RegisterPage: React.FC = () => {
@@ -20,6 +21,7 @@ const RegisterPage: React.FC = () => {
     role
   });
   const [registryError, setRegistryError] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
   const [passwordsNotMatch, setPasswordsNotMatch] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,6 +50,12 @@ const RegisterPage: React.FC = () => {
     const user: User = new User({name: formData.name, surname: formData.surname, 
       email: formData.email, password: formData.password, birthDate: formData.birthDate,
       role: formData.role});
+
+    const validate = validateUserDetails(user);
+    if(!validate.isValid){
+      setErrors(validate.errors);
+      return;
+    }
       
     const registerResponse: Response = await registerAPI(user);
     if(!registerResponse.succes){
@@ -159,6 +167,13 @@ const RegisterPage: React.FC = () => {
               Error occured during registry.
             </div>
           )}
+          { errors.map((error) => {
+            if(error.length === 0) return;
+            return(
+              <div className='error'>{error}</div>
+            )
+          })}
+          
         </form>
       </div>
     </div>

@@ -13,7 +13,7 @@
   border: lightgray 2px solid;
   border-radius: 2em;
   backdrop-filter: blur(20px);
-  height: 770px;
+  min-height: 770px;
 }
 
 .wrapper h1 {
@@ -55,6 +55,11 @@
 }
 
 .passwords-not-match {
+  color: red;
+  text-align: center;
+}
+
+.error {
   color: red;
   text-align: center;
 }

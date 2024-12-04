@@ -8,7 +8,6 @@ interface RoomListProps {
 }
 
 const RoomList = ({rooms}: RoomListProps) => {
-  console.log(rooms);
 
   const items = rooms.map(room => (
     <div key={room.roomNr} className='row'>

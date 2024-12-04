@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import './style.css';
 import 'boxicons/css/boxicons.min.css';
 import InputField from '../common/InputField'
 import { Link, useNavigate } from 'react-router-dom';
 import { LoginData, Response, loginApi } from '../Api/Api';
+import { User } from '../Users/User';
 
-const LogInPage: React.FC = () => {
+interface LoginPageProps {
+  loggedUser: User | undefined,
+  setLoggedUser: Dispatch<SetStateAction<User | undefined>>
+}
+
+const LogInPage = ({loggedUser, setLoggedUser}: LoginPageProps) => {
   // State to manage input values
   const [formData, setFormData] = useState({
     email: '',
@@ -29,6 +35,7 @@ const LogInPage: React.FC = () => {
       password: formData.password
     });   
     if(response.succes){
+      setLoggedUser(response.user);
       navigate("/");
     }
     else{
