@@ -25,6 +25,13 @@ public class ConvenienceService {
         return repository.findAll(pageable);
     }
 
+    public void deleteConvenience(Convenience convenience) {
+        if(!repository.findConvenienceById(convenience.getId()).isPresent()) {
+            throw new ConvenienceNotFoundException("Convenience with id " + convenience.getId() + " not found");
+        }
+        repository.deleteById(convenience.getId());
+    }
+
     public Convenience getConvenienceById(int id) {
         return repository.findConvenienceById(id).orElseThrow(
                 () -> new ConvenienceNotFoundException("Convenience id " + id + "was not found")

@@ -13,6 +13,7 @@ public interface ReviewRepository {
     Optional<Review> findReviewById(int id);
     List<Review> findAll();
     List<Review> findAll(Specification<Review> spec);
+    void deleteById(int id);
 
     @Query("SELECT AVG(r.rating) FROM Review r WHERE r.hotel.id = :hotelId")
     Double findAverageRatingByHotelId(@Param("hotelId") Integer hotelId);

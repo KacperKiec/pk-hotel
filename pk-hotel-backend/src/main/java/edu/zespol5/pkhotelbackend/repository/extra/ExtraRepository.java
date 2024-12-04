@@ -15,6 +15,7 @@ public interface ExtraRepository {
     Optional<Extra> findExtraById(int id);
     Page<Extra> findAll(Pageable pageable);
     List<Extra> findAll(Specification<Extra> spec);
+    void deleteById(int id);
 
     @Query("SELECT re.extra FROM ReservationExtra re WHERE re.reservation.id = :id")
     List<Extra> findExtrasByReservationId(@Param("id") int id);

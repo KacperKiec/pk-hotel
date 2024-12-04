@@ -17,6 +17,16 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final LoginSuccessHandler loginSuccessHandler;
+    private final LogoutSuccessHandler logoutSuccessHandler;
+    private final AuthenticationFailureHandler authenticationFailureHandler;
+
+    public SecurityConfig(LoginSuccessHandler loginSuccessHandler, LogoutSuccessHandler logoutSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler) {
+        this.loginSuccessHandler = loginSuccessHandler;
+        this.logoutSuccessHandler = logoutSuccessHandler;
+        this.authenticationFailureHandler = authenticationFailureHandler;
+    }
+
     @Bean
     public UserDetailsService userDetailsService(UserService userService) {
         return userService;
@@ -34,19 +44,22 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .formLogin(httpForm -> httpForm
-                        .loginPage("/login").permitAll()
+                        .loginProcessingUrl("/login")
                         .usernameParameter("email")
-                        .passwordParameter("password"))
+                        .passwordParameter("password")
+                        .successHandler(loginSuccessHandler)
+                        .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login")
+                        .logoutSuccessHandler(logoutSuccessHandler)
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID"))
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers("/user").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().permitAll()
-                )
+                        .anyRequest().permitAll())
+                .exceptionHandling(handler -> handler
+                        .authenticationEntryPoint(authenticationFailureHandler))
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
     }

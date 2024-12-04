@@ -22,6 +22,13 @@ public class HotelService {
         return toDTO(repository.save(hotel));
     }
 
+    public void deleteHotel(Hotel hotel) {
+        if(!repository.findHotelById(hotel.getId()).isPresent()) {
+            throw new HotelNotFoundException("Hotel with id " + hotel.getId() + " not found");
+        }
+        repository.deleteById(hotel.getId());
+    }
+
     public Hotel getHotelById(int id) {
         return repository.findHotelById(id).orElseThrow(
                 () -> new HotelNotFoundException("Hotel with id " + id + " was not found")

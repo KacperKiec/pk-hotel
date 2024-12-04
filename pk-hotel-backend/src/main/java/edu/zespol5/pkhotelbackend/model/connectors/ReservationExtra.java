@@ -3,13 +3,13 @@ package edu.zespol5.pkhotelbackend.model.connectors;
 import edu.zespol5.pkhotelbackend.model.Extra;
 import edu.zespol5.pkhotelbackend.model.reservation.Reservation;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table(name = "reservation_extra")
-@Setter
-@Getter
+@Data
 @IdClass(ReservationExtraId.class)
 public class ReservationExtra {
     @Id

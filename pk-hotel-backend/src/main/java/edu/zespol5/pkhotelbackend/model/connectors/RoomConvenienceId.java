@@ -12,20 +12,20 @@ import java.util.Objects;
 @Getter
 @Embeddable
 public class RoomConvenienceId implements Serializable {
-    private RoomId room;
-    private Integer convenience;
+    private RoomId roomId;
+    private Integer convenienceId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RoomConvenienceId that = (RoomConvenienceId) o;
-        return Objects.equals(room, that.room) &&
-                Objects.equals(convenience, that.convenience);
+        return Objects.equals(roomId, that.roomId) &&
+                Objects.equals(convenienceId, that.convenienceId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(room, convenience);
+        return Objects.hash(roomId, convenienceId);
     }
 }
