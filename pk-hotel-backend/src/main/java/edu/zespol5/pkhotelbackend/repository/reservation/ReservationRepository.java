@@ -12,6 +12,7 @@ public interface ReservationRepository {
     Reservation save(Reservation reservation);
     Optional<Reservation> findReservationById(int id);
     List<Reservation> findAll();
+    Page<Reservation> findAll(Pageable pageable);
     Page<Reservation> findAll(Specification<Reservation> spec, Pageable pageable);
     void deleteById(int id);
 }

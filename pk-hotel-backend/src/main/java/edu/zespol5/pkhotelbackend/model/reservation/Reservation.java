@@ -37,4 +37,12 @@ public class Reservation {
 
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<ReservationExtra> extras = new HashSet<>();
+
+    public void addExtra(ReservationExtra extra) {
+        extras.add(extra);
+    }
+
+    public void removeExtra(ReservationExtra extra) {
+        extras.remove(extra);
+    }
 }

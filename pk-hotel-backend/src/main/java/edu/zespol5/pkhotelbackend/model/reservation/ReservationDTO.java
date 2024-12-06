@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 @Data
 public class ReservationDTO {
+    private int id;
     private String clientName;
     private String clientLastName;
     private LocalDate checkInDate;
@@ -13,4 +14,5 @@ public class ReservationDTO {
     private String hotelName;
     private int roomNr;
     private ReservationStatus status;
+    private Double totalPrice;
 }

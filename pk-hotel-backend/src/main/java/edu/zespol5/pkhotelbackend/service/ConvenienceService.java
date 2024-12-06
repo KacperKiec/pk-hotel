@@ -32,6 +32,16 @@ public class ConvenienceService {
         repository.deleteById(convenience.getId());
     }
 
+    public Convenience updateConvenience(Convenience convenience) {
+        var conv = repository.findConvenienceById(convenience.getId()).get();
+
+        if(convenience.getName() != null) {
+            convenience.setName(convenience.getName());
+        }
+
+        return repository.save(convenience);
+    }
+
     public Convenience getConvenienceById(int id) {
         return repository.findConvenienceById(id).orElseThrow(
                 () -> new ConvenienceNotFoundException("Convenience id " + id + "was not found")

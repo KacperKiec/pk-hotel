@@ -50,9 +50,17 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDTO updateUser(User user) {
-        User existingUser = repository.findUserByEmail(user.getEmail()).orElseThrow(
+        var existingUser = repository.findUserById(user.getId()).orElseThrow(
                 () -> new UserNotFoundException("User not found")
         );
+
+        if(user.getEmail() != null && !user.getEmail().isEmpty() &&
+                !user.getEmail().equals(existingUser.getEmail())) {
+            var email = repository.findUserByEmail(user.getEmail());
+            if(email.isPresent())
+                throw new UserAlreadyExistsException("User with given email already exists");
+            existingUser.setEmail(user.getEmail());
+        }
 
         if (user.getFirstName() != null && !user.getFirstName().isEmpty()) {
             existingUser.setFirstName(user.getFirstName());
@@ -119,6 +127,7 @@ public class UserService implements UserDetailsService {
 
     private UserDTO toDTO(User user){
         UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setEmail(user.getEmail());

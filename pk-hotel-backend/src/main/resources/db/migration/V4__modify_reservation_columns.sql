@@ -1,0 +1,1 @@
+ALTER TABLE reservation MODIFY status enum('CANCELED', 'ACCEPTED', 'IN_REALISATION', 'ENDED');

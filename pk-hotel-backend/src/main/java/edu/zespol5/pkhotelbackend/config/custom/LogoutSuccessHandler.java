@@ -1,4 +1,4 @@
-package edu.zespol5.pkhotelbackend.config;
+package edu.zespol5.pkhotelbackend.config.custom;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;

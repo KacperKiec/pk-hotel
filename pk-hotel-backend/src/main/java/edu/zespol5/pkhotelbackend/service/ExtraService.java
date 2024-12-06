@@ -1,6 +1,7 @@
 package edu.zespol5.pkhotelbackend.service;
 
 import edu.zespol5.pkhotelbackend.exception.ExtraNotFoundException;
+import edu.zespol5.pkhotelbackend.model.Convenience;
 import edu.zespol5.pkhotelbackend.repository.extra.ExtraRepository;
 import edu.zespol5.pkhotelbackend.repository.extra.ExtraSpecification;
 import edu.zespol5.pkhotelbackend.model.Extra;
@@ -36,6 +37,22 @@ public class ExtraService {
             throw new ExtraNotFoundException("Extra with id " + extra.getId() + " not found");
         }
         repository.deleteById(extra.getId());
+    }
+
+    public Extra updateExtra(Extra extra) {
+        var ext = repository.findExtraById(extra.getId()).orElseThrow(
+                () -> new ExtraNotFoundException("Extra with id " + extra.getId() + " not found")
+        );
+
+        if(ext.getName() != null) {
+            ext.setName(extra.getName());
+        }
+
+        if(ext.getPricePerDay() != null) {
+            ext.setPricePerDay(extra.getPricePerDay());
+        }
+
+        return repository.save(ext);
     }
 
     public Extra getExtraById(int id) {
