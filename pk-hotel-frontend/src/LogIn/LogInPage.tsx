@@ -3,7 +3,7 @@ import './style.css';
 import 'boxicons/css/boxicons.min.css';
 import InputField from '../common/InputField'
 import { Link, useNavigate } from 'react-router-dom';
-import { LoginData, Response, loginApi } from '../Api/Api';
+import { Response, loginApi } from '../Api/Api';
 import { User } from '../Users/User';
 
 interface LoginPageProps {
@@ -17,6 +17,8 @@ const LogInPage = ({loggedUser, setLoggedUser}: LoginPageProps) => {
     email: '',
     password: ''
   });
+
+  const [error, setErrors] = useState('');
 
   const navigate = useNavigate();
 
@@ -34,13 +36,21 @@ const LogInPage = ({loggedUser, setLoggedUser}: LoginPageProps) => {
       email: formData.email, 
       password: formData.password
     });   
-    if(response.succes){
+    if(response.status === 202){
       setLoggedUser(response.user);
       navigate("/");
     }
-    else{
-      console.log("Unable to login")
+    else if(response.status === 404){
+      setErrors('Invalid login credentials.');
+      setFormData({
+        email: '',
+        password: '',
+      });
     }
+    else{
+      setErrors('Unable to connect to the server.\nPlease try later.');
+    }
+    console.log(response.status);
   };
 
   return (
@@ -92,6 +102,11 @@ const LogInPage = ({loggedUser, setLoggedUser}: LoginPageProps) => {
               </Link>
             </label>
           </div>
+          {error !== '' && 
+          <div className="login-error-message">
+            {error}
+          </div>
+          }
         </form>
       </div>
     </div>
