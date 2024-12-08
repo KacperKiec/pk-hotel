@@ -1,6 +1,7 @@
 package edu.zespol5.pkhotelbackend.model.room;
 
 import edu.zespol5.pkhotelbackend.model.Convenience;
+import edu.zespol5.pkhotelbackend.model.Image;
 import lombok.Data;
 
 import java.util.List;
@@ -15,4 +16,5 @@ public class RoomDTO {
     private String description;
     private List<Convenience> conveniences;
     private Double rating;
+    private List<Image> images;
 }

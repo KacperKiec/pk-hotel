@@ -1,7 +1,8 @@
 package edu.zespol5.pkhotelbackend.model.room;
 
-import edu.zespol5.pkhotelbackend.model.connectors.RoomConvenience;
+import edu.zespol5.pkhotelbackend.model.room_convenience.RoomConvenience;
 import edu.zespol5.pkhotelbackend.model.hotel.Hotel;
+import edu.zespol5.pkhotelbackend.model.room_image.RoomImage;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -33,6 +34,9 @@ public class Room {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RoomConvenience> conveniences = new HashSet<>();
 
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<RoomImage> images = new HashSet<>();
+
     public Room(){
 
     }
@@ -43,5 +47,13 @@ public class Room {
 
     public void removeConvenience(RoomConvenience roomConvenience){
         conveniences.remove(roomConvenience);
+    }
+
+    public void addImage(RoomImage roomImage){
+        images.add(roomImage);
+    }
+
+    public void removeImage(RoomImage roomImage){
+        images.remove(roomImage);
     }
 }

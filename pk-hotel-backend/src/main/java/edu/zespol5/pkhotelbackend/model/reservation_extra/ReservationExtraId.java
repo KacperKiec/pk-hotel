@@ -1,4 +1,4 @@
-package edu.zespol5.pkhotelbackend.model.connectors;
+package edu.zespol5.pkhotelbackend.model.reservation_extra;
 
 import jakarta.persistence.Embeddable;
 import lombok.Getter;

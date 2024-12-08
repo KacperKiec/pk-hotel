@@ -1,7 +1,7 @@
 package edu.zespol5.pkhotelbackend.service;
 
 import edu.zespol5.pkhotelbackend.exception.*;
-import edu.zespol5.pkhotelbackend.model.connectors.ReservationExtra;
+import edu.zespol5.pkhotelbackend.model.reservation_extra.ReservationExtra;
 import edu.zespol5.pkhotelbackend.model.reservation.ReservationDTO;
 import edu.zespol5.pkhotelbackend.model.room.Room;
 import edu.zespol5.pkhotelbackend.repository.extra.ExtraRepository;

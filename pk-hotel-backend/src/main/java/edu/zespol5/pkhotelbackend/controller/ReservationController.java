@@ -1,6 +1,6 @@
 package edu.zespol5.pkhotelbackend.controller;
 
-import edu.zespol5.pkhotelbackend.model.connectors.ReservationExtraRequestDTO;
+import edu.zespol5.pkhotelbackend.model.reservation_extra.ReservationExtraRequestDTO;
 import edu.zespol5.pkhotelbackend.model.reservation.ReservationDTO;
 import edu.zespol5.pkhotelbackend.service.ReservationService;
 import org.springframework.http.ResponseEntity;

@@ -98,7 +98,10 @@ public class HotelService {
         dto.setCountry(hotel.getCountry());
         dto.setCity(hotel.getCity());
         dto.setAddress(hotel.getAddress());
-        dto.setRating(reviewRepository.findAverageRatingByHotelId(hotel.getId()));
+
+        Double rating = reviewRepository.findAverageRatingByHotelId(hotel.getId());
+
+        dto.setRating(rating != null ? rating : 0.0);
         return dto;
     }
 }

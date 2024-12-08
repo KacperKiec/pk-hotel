@@ -5,10 +5,10 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "convenience")
-public class Convenience {
+@Table(name = "image")
+public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String name;
+    private String path;
 }

@@ -62,4 +62,10 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse("819", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ImageNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleImageNotFoundException(ImageNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("820", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
 }

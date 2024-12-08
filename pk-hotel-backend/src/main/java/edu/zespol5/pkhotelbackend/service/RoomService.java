@@ -2,13 +2,17 @@ package edu.zespol5.pkhotelbackend.service;
 
 import edu.zespol5.pkhotelbackend.exception.ConvenienceNotFoundException;
 import edu.zespol5.pkhotelbackend.exception.HotelNotFoundException;
-import edu.zespol5.pkhotelbackend.model.connectors.RoomConvenience;
+import edu.zespol5.pkhotelbackend.exception.ImageNotFoundException;
+import edu.zespol5.pkhotelbackend.model.Image;
+import edu.zespol5.pkhotelbackend.model.room_convenience.RoomConvenience;
 import edu.zespol5.pkhotelbackend.model.room.RoomDTO;
+import edu.zespol5.pkhotelbackend.model.room_image.RoomImage;
 import edu.zespol5.pkhotelbackend.repository.convenience.ConvenienceRepository;
 import edu.zespol5.pkhotelbackend.repository.hotel.HotelRepository;
 import edu.zespol5.pkhotelbackend.model.room.Room;
 import edu.zespol5.pkhotelbackend.model.room.RoomStandard;
 import edu.zespol5.pkhotelbackend.exception.RoomNotFoundException;
+import edu.zespol5.pkhotelbackend.repository.image.ImageRepository;
 import edu.zespol5.pkhotelbackend.repository.review.ReviewRepository;
 import edu.zespol5.pkhotelbackend.repository.room.RoomRepository;
 import edu.zespol5.pkhotelbackend.repository.room.RoomSpecification;
@@ -27,12 +31,14 @@ public class RoomService {
     private final HotelRepository hotelRepository;
     private final ConvenienceRepository convenienceRepository;
     private final ReviewRepository reviewRepository;
+    private final ImageRepository imageRepository;
 
-    public RoomService(RoomRepository roomRepository, HotelRepository hotelRepository, ConvenienceRepository convenienceRepository, ReviewRepository reviewRepository) {
+    public RoomService(RoomRepository roomRepository, HotelRepository hotelRepository, ConvenienceRepository convenienceRepository, ReviewRepository reviewRepository, ImageRepository imageRepository) {
         this.roomRepository = roomRepository;
         this.hotelRepository = hotelRepository;
         this.convenienceRepository = convenienceRepository;
         this.reviewRepository = reviewRepository;
+        this.imageRepository = imageRepository;
     }
 
     public RoomDTO saveRoom(Room room) {
@@ -65,13 +71,13 @@ public class RoomService {
     }
 
     @Transactional
-    public void removeConvenience(Room room, int convenienceId) {
+    public void removeConvenience(Room room, Integer convenienceId) {
         var existingRoom = roomRepository.findRoomByHotel_IdAndRoomNr(room.getHotel().getId(), room.getRoomNr()).orElseThrow(
                 () -> new RoomNotFoundException("Room not found")
         );
 
         var convenience = existingRoom.getConveniences().stream()
-                .filter(conv -> conv.getConvenience().getId() == convenienceId)
+                .filter(conv -> conv.getConvenience().getId().equals(convenienceId))
                 .findFirst()
                 .orElseThrow(
                         () -> new ConvenienceNotFoundException("Convenience not found")
@@ -79,6 +85,42 @@ public class RoomService {
 
         existingRoom.removeConvenience(convenience);
         roomRepository.save(existingRoom);
+    }
+
+    @Transactional
+    public RoomDTO addImages(Room room, List<Image> images) {
+        var existingRoom = roomRepository.findRoomByHotel_IdAndRoomNr(room.getHotel().getId(), room.getRoomNr()).orElseThrow(
+                () -> new RoomNotFoundException("Room not found")
+        );
+
+
+        for (Image img : images) {
+
+            if(img.getPath() != null && !img.getPath().isEmpty()){
+                var temp = imageRepository.save(img);
+                RoomImage roomImage = new RoomImage(room, temp);
+                existingRoom.addImage(roomImage);
+            }
+        }
+
+        return toDTO(roomRepository.save(existingRoom));
+    }
+
+    @Transactional
+    public void removeImage(Room room, Integer imageId) {
+        var existingRoom = roomRepository.findRoomByHotel_IdAndRoomNr(room.getHotel().getId(), room.getRoomNr()).orElseThrow(
+                () -> new RoomNotFoundException("Room not found")
+        );
+
+        var image = existingRoom.getImages().stream()
+                .filter(img -> img.getImage().getId().equals(imageId))
+                .findFirst()
+                .orElseThrow(
+                        () -> new ImageNotFoundException("Image with id " + imageId + " was not found")
+                );
+
+        existingRoom.removeImage(image);
+        imageRepository.deleteById(image.getImage().getId());
     }
 
     public RoomDTO getRoomById(int hotelId, int roomNr) {
@@ -158,7 +200,11 @@ public class RoomService {
         dto.setStandard(room.getStandard());
         dto.setDescription(room.getDescription());
         dto.setConveniences(convenienceRepository.findConvenienceByRoomId(room.getRoomNr(), room.getHotel().getId()));
-        dto.setRating(reviewRepository.findAverageRatingByHotelId(room.getHotel().getId()));
+
+        Double rating = reviewRepository.findAverageRatingByHotelId(room.getHotel().getId());
+
+        dto.setRating(rating != null ? rating : 0.0);
+        dto.setImages(imageRepository.findImageByRoomId(room.getRoomNr(), room.getHotel().getId()));
 
         return dto;
     }

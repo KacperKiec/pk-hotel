@@ -1,4 +1,4 @@
-package edu.zespol5.pkhotelbackend.model.connectors;
+package edu.zespol5.pkhotelbackend.model.room_convenience;
 
 import edu.zespol5.pkhotelbackend.model.room.Room;
 import lombok.Data;

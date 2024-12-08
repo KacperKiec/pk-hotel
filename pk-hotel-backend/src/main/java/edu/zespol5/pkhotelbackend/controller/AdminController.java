@@ -2,13 +2,14 @@ package edu.zespol5.pkhotelbackend.controller;
 
 import edu.zespol5.pkhotelbackend.model.Convenience;
 import edu.zespol5.pkhotelbackend.model.Extra;
-import edu.zespol5.pkhotelbackend.model.connectors.RoomConvenienceRequestDTO;
+import edu.zespol5.pkhotelbackend.model.room_convenience.RoomConvenienceRequestDTO;
 import edu.zespol5.pkhotelbackend.model.hotel.Hotel;
 import edu.zespol5.pkhotelbackend.model.hotel.HotelDTO;
 import edu.zespol5.pkhotelbackend.model.reservation.Reservation;
 import edu.zespol5.pkhotelbackend.model.reservation.ReservationDTO;
 import edu.zespol5.pkhotelbackend.model.room.Room;
 import edu.zespol5.pkhotelbackend.model.room.RoomDTO;
+import edu.zespol5.pkhotelbackend.model.room_image.RoomImageRequestDTO;
 import edu.zespol5.pkhotelbackend.model.user.User;
 import edu.zespol5.pkhotelbackend.model.user.UserDTO;
 import edu.zespol5.pkhotelbackend.service.*;
@@ -85,6 +86,18 @@ public class AdminController {
     @DeleteMapping(value = "/room-conveniences")
     public ResponseEntity<?> removeRoomConveniences(@RequestBody RoomConvenienceRequestDTO param) {
         roomService.removeConvenience(param.getRoom(), param.getConveniencesIds().getFirst());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(value = "/room-image")
+    public ResponseEntity<RoomDTO> addRoomImages(@RequestBody RoomImageRequestDTO param) {
+        var result = roomService.addImages(param.getRoom(), param.getImages());
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    @DeleteMapping(value = "/room-image")
+    public ResponseEntity<?> removeRoomImages(@RequestBody RoomImageRequestDTO param) {
+        roomService.removeImage(param.getRoom(), param.getImages().getFirst().getId());
         return ResponseEntity.noContent().build();
     }
 

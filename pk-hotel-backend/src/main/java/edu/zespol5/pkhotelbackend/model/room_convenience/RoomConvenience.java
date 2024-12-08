@@ -1,10 +1,9 @@
-package edu.zespol5.pkhotelbackend.model.connectors;
+package edu.zespol5.pkhotelbackend.model.room_convenience;
 
 import edu.zespol5.pkhotelbackend.model.Convenience;
 import edu.zespol5.pkhotelbackend.model.room.Room;
 import edu.zespol5.pkhotelbackend.model.room.RoomId;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

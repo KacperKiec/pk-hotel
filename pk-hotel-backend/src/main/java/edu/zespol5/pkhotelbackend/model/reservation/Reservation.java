@@ -1,6 +1,6 @@
 package edu.zespol5.pkhotelbackend.model.reservation;
 
-import edu.zespol5.pkhotelbackend.model.connectors.ReservationExtra;
+import edu.zespol5.pkhotelbackend.model.reservation_extra.ReservationExtra;
 import edu.zespol5.pkhotelbackend.model.room.Room;
 import edu.zespol5.pkhotelbackend.model.user.User;
 import jakarta.persistence.*;
