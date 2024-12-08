@@ -7,7 +7,7 @@ import LogInPage from './LogIn/LogInPage';
 import RegisterPage from './Register/RegisterPage';
 import { User } from './Users/User';
 import { UserPanel } from './Panels/UserPanel/UserPanel';
-import { AdminPanel } from './AdminPanel/AdminPanel';
+import { AdminPanel } from './Panels/AdminPanel/AdminPanel';
 
 function App() {
   const [loggedUser, setLoggedUser] = useState<User | undefined>(undefined);

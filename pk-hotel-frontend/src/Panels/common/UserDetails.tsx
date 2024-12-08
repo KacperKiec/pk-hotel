@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import "../UserPanel/UserPanel.css";
 import { User } from "../../Users/User";
 import { useNavigate } from "react-router-dom";
-import { updateUserApi } from "../../Api/Api";
+import { logoutAPI, updateUserApi } from "../../Api/Api";
 
 interface UserDetailsProps {
   loggedUser: User;
@@ -26,6 +26,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ loggedUser, setLoggedUser }: 
   });
 
   const [updateError, setUpdateError] = useState(false);
+  const [logoutError, setLogoutError] = useState(false);
 
   const handleEdit = (field: keyof typeof isEditing) => {
     setIsEditing({ ...isEditing, [field]: true });
@@ -65,9 +66,14 @@ const UserDetails: React.FC<UserDetailsProps> = ({ loggedUser, setLoggedUser }: 
     }
   };
 
-  const handleLogout = (e: any) => {
+  const handleLogout = async (e: any) => {
     setLoggedUser(undefined);
-    navigator('/');
+    try{
+      await logoutAPI();
+      navigator('/');
+    }catch(error){
+      setLogoutError(true);
+    }
   }
 
   return (
@@ -113,6 +119,11 @@ const UserDetails: React.FC<UserDetailsProps> = ({ loggedUser, setLoggedUser }: 
       { updateError && 
         <div className="update-user-error">
           There was a problem with updating your profile. Please try again later.
+        </div>
+      }
+      { logoutError && 
+        <div className="update-user-error">
+          There was a problem with loging out, try again.
         </div>
       }
     </div>

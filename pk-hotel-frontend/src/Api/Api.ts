@@ -90,3 +90,18 @@ export const updateUserApi = async (updatedUser: User): Promise<UpdateResponse> 
       throw new Error(`Connection refused`);
    }
 }
+
+export const logoutAPI = async () => {
+   try {
+     const response = await fetch('http://localhost:8080/logout', {
+       method: 'POST',
+       credentials: 'include', // Ensures cookies (JSESSIONID) are sent with the request
+     });
+ 
+     if (!response.ok) {
+      throw new Error("Error during logout");
+     }
+   } catch (error) {
+     console.error('Error during logout:', error);
+   }
+ };

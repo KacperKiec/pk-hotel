@@ -1,15 +1,16 @@
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import NavBar from '../common/NavBar'
-import { ReservationHistory } from '../common/ReservationHistory';
-import './UserPanel.css'
+import HotelPanel from './HotelPanel'
+import './AdminPanel.css'
 
-export const UserPanel = () => {
-    const [activeTab, setActiveTab] = useState(1);
+export const AdminPanel = () => {
+  const [activeTab, setActiveTab] = useState(1);
+  const tabsNames = ['Add Hotel', 'Rooms', 'Users'];
   return (
     <div className="user-panel-container">
-        <NavBar activeTab={activeTab} setActiveTab={setActiveTab}/>
-        {activeTab === 1 && <div>Admin</div>}
-        {activeTab === 2 && <ReservationHistory></ReservationHistory>}
+        <NavBar activeTab={activeTab} setActiveTab={setActiveTab} tabsNames={tabsNames}/>
+        {activeTab === 1 && <HotelPanel/>}
+        {activeTab === 2 && <div>Rooms</div>}
     </div>
     
   );

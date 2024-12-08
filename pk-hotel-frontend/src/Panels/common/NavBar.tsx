@@ -2,22 +2,24 @@ import { Dispatch } from "react";
 import "./NavBar.css"; 
 
 interface NavBarProps {
-    activeTab: number;
-    setActiveTab: Dispatch<number>;
+  activeTab: number;
+  setActiveTab: Dispatch<number>;
+  tabsNames: string[];
 }
   
-const NavBar = ({activeTab, setActiveTab} : NavBarProps) => {
-
+const NavBar = ({activeTab, setActiveTab, tabsNames} : NavBarProps) => {
   return (
     <div id="main">
       <nav className="navbar navbar-default">
         <ul className="nav navbar-nav">
-          <li className={activeTab === 1 ? "active" : ""}>
-            <button onClick={() => setActiveTab(1)}>User Details</button>
-          </li>
-          <li className={activeTab === 2 ? "active" : ""}>
-            <button onClick={() => setActiveTab(2)}>Reservations History</button>
-          </li>
+          { tabsNames.map((tabName, i) => {
+            return (
+              <li key={i+1} className={activeTab === i+1 ? "active" : ""}>
+                <button onClick={() => setActiveTab(i+1)}>{tabName}</button>
+              </li>
+              )
+            })
+          }
         </ul>
       </nav>
     </div>

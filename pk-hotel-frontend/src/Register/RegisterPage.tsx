@@ -61,7 +61,7 @@ const RegisterPage: React.FC = () => {
       //przekieruj do strony z logowaniem
       navigate('/login');
     } catch(error: any){
-      setErrors((prev) => ([...prev, 'Unable to connect to the server.']));
+      setErrors((prev) => (['Unable to connect to the server.']));
     }
 
   };
@@ -143,7 +143,7 @@ const RegisterPage: React.FC = () => {
           <div className="login">
             <label>
               Already have an account?{' '}
-              <Link className="loginLink register-link" to="/log-in">
+              <Link className="loginLink register-link" to="/login">
                 Login
               </Link>
             </label>
