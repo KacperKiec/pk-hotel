@@ -3,7 +3,7 @@ import './style.css';
 import 'boxicons/css/boxicons.min.css';
 import InputField from '../common/InputField';
 import { Link, useNavigate } from 'react-router-dom';
-import { Response, registerAPI } from '../Api/Api';
+import { registerAPI } from '../Api/Api';
 import { User, Role } from '../Users/User';
 import { validateUserDetails } from '../Users/ValidateUserDetails';
 
@@ -20,7 +20,6 @@ const RegisterPage: React.FC = () => {
     birthDate: '',
     role
   });
-  const [registryError, setRegistryError] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [passwordsNotMatch, setPasswordsNotMatch] = useState(false);
 
@@ -56,23 +55,15 @@ const RegisterPage: React.FC = () => {
       setErrors(validate.errors);
       return;
     }
-      
-    const registerResponse: Response = await registerAPI(user);
-    if(!registerResponse.succes){
-      setFormData(prev => ({
-        email: '',
-        name: '',
-        surname: '',
-        password: '',
-        confirmPassword: '',
-        birthDate: '',
-        role
-      }));
-      setRegistryError(true);
-      return;
+    
+    try{
+      await registerAPI(user);
+      //przekieruj do strony z logowaniem
+      navigate('/login');
+    } catch(error: any){
+      setErrors((prev) => ([...prev, 'Unable to connect to the server.']));
     }
-    //przekieruj do strony z logowaniem
-    navigate('/login');
+
   };
 
   return (
@@ -162,13 +153,8 @@ const RegisterPage: React.FC = () => {
               Passwords does not match.
             </div>
           )}
-           {registryError && (
-            <div className='passwords-not-match'>
-              Error occured during registry.
-            </div>
-          )}
           { errors.map((error) => {
-            if(error.length === 0) return;
+            if(error.length === 0) return -1;
             return(
               <div className='error'>{error}</div>
             )

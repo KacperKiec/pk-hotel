@@ -1,14 +1,15 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
-import "./UserPanel.css";
-import { User } from "../Users/User";
+import "../UserPanel/UserPanel.css";
+import { User } from "../../Users/User";
 import { useNavigate } from "react-router-dom";
+import { updateUserApi } from "../../Api/Api";
 
 interface UserDetailsProps {
   loggedUser: User;
   setLoggedUser: Dispatch<SetStateAction<User | undefined>>;
 }
 
-const UserPanel: React.FC<UserDetailsProps> = ({ loggedUser, setLoggedUser }: UserDetailsProps) => {
+const UserDetails: React.FC<UserDetailsProps> = ({ loggedUser, setLoggedUser }: UserDetailsProps) => {
   const navigator = useNavigate();
   const [isEditing, setIsEditing] = useState({
     name: false,
@@ -20,9 +21,11 @@ const UserPanel: React.FC<UserDetailsProps> = ({ loggedUser, setLoggedUser }: Us
   const [userData, setUserData] = useState({
     name: loggedUser.name,
     surname: loggedUser.surname,
-    email: loggedUser.email,
+    //email: loggedUser.email,
     birthDate: loggedUser.birthDate,
   });
+
+  const [updateError, setUpdateError] = useState(false);
 
   const handleEdit = (field: keyof typeof isEditing) => {
     setIsEditing({ ...isEditing, [field]: true });
@@ -32,9 +35,34 @@ const UserPanel: React.FC<UserDetailsProps> = ({ loggedUser, setLoggedUser }: Us
     setUserData({ ...userData, [field]: e.target.value });
   };
 
-  const handleSave = (field: keyof typeof isEditing) => {
+  const handleSave = async (field: keyof typeof isEditing) => {
     setIsEditing({ ...isEditing, [field]: false });
-    // Add your save logic here if necessary
+    //console.log(`SAVE ${field}`);
+    // Tylko te które da sie zmienić reszta idzie z zalogowanego usera
+    const updatedUser = new User({
+      name: userData.name,
+      surname: userData.surname,
+     // email: userData.email,
+      email: loggedUser.email,
+      birthDate: userData.birthDate,
+      password: loggedUser.password,
+      id: loggedUser.id,
+      role: loggedUser.role
+    });
+    
+    try{
+      await updateUserApi(updatedUser);
+      //zmien aktualnie zalogowanego uzytkownika
+      setLoggedUser(updatedUser);
+    }catch(error: any){
+      setUpdateError(true);
+      //zmien wartosc inputow spowrotem na zalogowanego uzytkownika
+      setUserData({
+        name: loggedUser.name,
+        surname: loggedUser.surname,
+        birthDate: loggedUser.birthDate
+      });
+    }
   };
 
   const handleLogout = (e: any) => {
@@ -82,8 +110,13 @@ const UserPanel: React.FC<UserDetailsProps> = ({ loggedUser, setLoggedUser }: Us
           </div>
         );
       })}
+      { updateError && 
+        <div className="update-user-error">
+          There was a problem with updating your profile. Please try again later.
+        </div>
+      }
     </div>
   );
 };
 
-export default UserPanel;
+export default UserDetails;

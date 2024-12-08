@@ -1,18 +1,22 @@
-import { User, UserDTO, transformUser, transformUserDTOToUser } from '../Users/User'
+import { User, transformUser, transformUserDTOToUser } from '../Users/User'
 const baseUrl = 'http://localhost:8080'
-
-export interface Response {
-   succes: boolean,
-   user?: User 
-}
 
 export interface LoginData {
    email: string,
    password: string
 }
 
+export interface Response {
+   status: number,
+   user?: User
+}
+
+export interface UpdateResponse {
+   message: string
+}
+
 // Register API
-export const registerAPI = async (user: User): Promise<Response> => {
+export const registerAPI = async (user: User) => {
    try{
       const response = await fetch(`${baseUrl}/register`, {
          method: "POST",
@@ -24,17 +28,10 @@ export const registerAPI = async (user: User): Promise<Response> => {
       //console.log(JSON.stringify(transformUser(user)));
       
       if(!response.ok){
-         throw new Error(`Registration failed ${response.statusText}`);
+         throw new Error(`Registration failed ${response.status}`);
       }
-      
-      const registerResponse: Response = await response.json();
-      registerResponse.succes = true;
-      console.log(registerResponse);
-      return registerResponse;
-   } catch(error){
-      return {
-         succes: false
-      };
+   } catch(error: any){
+      throw new Error(error.message);
    }
 }
 
@@ -53,20 +50,43 @@ export const loginApi = async (data: LoginData): Promise<Response> => {
          body: params.toString(),
          credentials: 'include',
       });
-
       if(!response.ok){
-         throw new Error(`HTTP error! status: ${response.status}`);
+         throw new Error(`${response.status}`);
       }
       const loggedUser: User = transformUserDTOToUser(await response.json());
       let loginResponse: Response = {
-         succes: true,
+         status: response.status,
          user: loggedUser
       };
+
       return loginResponse;
    }
-   catch(error){
+   catch(error: any){
+      const status: number = Number(error.message)
       return{
-         succes: false
+         status: status,
       }
+   }
+}
+
+export const updateUserApi = async (updatedUser: User): Promise<UpdateResponse> => {
+   try{
+      const response = await fetch(`${baseUrl}/user`, {
+         method: 'PATCH',
+         headers: {
+           'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(transformUser(updatedUser)),
+         credentials: 'include',
+      });
+
+      if(!response.ok){
+         throw new Error(`Unable to connect to the server. ${response.status}`);
+      }
+      const updateResponse: UpdateResponse = await response.json();
+      updateResponse.message = "Saved"
+      return updateResponse;
+   } catch(error: any){
+      throw new Error(`Connection refused`);
    }
 }

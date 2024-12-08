@@ -1,0 +1,48 @@
+.navbar {
+    margin: 0;
+    background-color: #275DAD;
+    border: 1px solid grey;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 8px 8px 0 0;
+  }
+  
+  .navbar-default .navbar-nav {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .navbar-default .navbar-nav > li {
+    margin: 0 10px;
+  }
+  
+  .navbar-default .navbar-nav > li > button {
+    color: #fff;
+    padding: 10px 20px;
+    outline: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  
+  .navbar-default .navbar-nav > li > button:hover {
+    color: #121212;
+    background-color: #fff;
+  }
+  
+  .navbar-default .navbar-nav > .active > button {
+    color: #fff;
+    background-color: #1c427a;
+    border-radius: 4px;
+  }
+  
+  .content {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
