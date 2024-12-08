@@ -1,3 +1,4 @@
+import { Hotel, HotelDTO } from '../Hotel/Hotel'
 import { User, transformUser, transformUserDTOToUser } from '../Users/User'
 const baseUrl = 'http://localhost:8080'
 
@@ -16,7 +17,7 @@ export interface UpdateResponse {
 }
 
 // Register API
-export const registerAPI = async (user: User) => {
+export const registerAPI = async (user: User): Promise<Response> => {
    try{
       const response = await fetch(`${baseUrl}/register`, {
          method: "POST",
@@ -26,12 +27,18 @@ export const registerAPI = async (user: User) => {
          body: JSON.stringify(transformUser(user)),
       });
       //console.log(JSON.stringify(transformUser(user)));
-      
+      console.log(response.statusText);
       if(!response.ok){
-         throw new Error(`Registration failed ${response.status}`);
+         throw new Error(`${response.status}`);
+      }
+      return {
+         status: response.status,
       }
    } catch(error: any){
-      throw new Error(error.message);
+      const status: number = Number(error.message)
+      return {
+         status
+      }
    }
 }
 
@@ -105,3 +112,58 @@ export const logoutAPI = async () => {
      console.error('Error during logout:', error);
    }
  };
+
+
+export const addHotelApi = async (hotel: HotelDTO): Promise<Response> => {
+
+   try{
+      const response = await fetch(`${baseUrl}/admin/hotel`, {
+         method: 'POST',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(hotel),
+         credentials: 'include',
+      });
+      if(!response.ok){
+         throw new Error(`${response.status}`);
+      }
+
+      return {
+         status: response.status,
+      }
+   }
+   catch(error: any){
+      const status: number = Number(error.message)
+      return{
+         status: status,
+      }
+   }
+}
+
+export const removeHotelApi = async (id: number): Promise<Response> => {
+
+   try{
+      const response = await fetch(`${baseUrl}/admin/hotel`, {
+         method: 'DELETE',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({id}),
+         credentials: 'include',
+      });
+      if(!response.ok){
+         throw new Error(`${response.status}`);
+      }
+
+      return {
+         status: response.status,
+      }
+   }
+   catch(error: any){
+      const status: number = Number(error.message)
+      return{
+         status: status,
+      }
+   }
+}

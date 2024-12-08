@@ -3,7 +3,7 @@ import './style.css';
 import 'boxicons/css/boxicons.min.css';
 import InputField from '../common/InputField';
 import { Link, useNavigate } from 'react-router-dom';
-import { registerAPI } from '../Api/Api';
+import { registerAPI, Response } from '../Api/Api';
 import { User, Role } from '../Users/User';
 import { validateUserDetails } from '../Users/ValidateUserDetails';
 
@@ -56,14 +56,16 @@ const RegisterPage: React.FC = () => {
       return;
     }
     
-    try{
-      await registerAPI(user);
-      //przekieruj do strony z logowaniem
+    const response: Response = await registerAPI(user);
+    if(response.status === 201){
       navigate('/login');
-    } catch(error: any){
+    }
+    else if(response.status === 409){
+      setErrors((prev) => (['User with this email already exist, please login.']));
+    }
+    else{
       setErrors((prev) => (['Unable to connect to the server.']));
     }
-
   };
 
   return (

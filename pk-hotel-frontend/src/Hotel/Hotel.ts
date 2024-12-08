@@ -1,5 +1,14 @@
 import dayjs from 'dayjs';
 
+export type HotelDTO = {
+  name: string;
+  owner: string;
+  registerDate: string;
+  country: string;
+  city: string;
+  address: string;
+}
+
 export class Hotel {
   //private properties
   private _name: string;
@@ -65,4 +74,15 @@ export class Hotel {
   public set address(address: string){
     this._address = address;
   }
+}
+
+export const transfromHotel = (hotel: Hotel): HotelDTO => {
+  return {
+    name: hotel.name,
+    owner: hotel.owner,
+    registerDate: hotel.registerDate,
+    country: hotel.country,
+    city: hotel.city,
+    address: hotel.address
+  };
 }

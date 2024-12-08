@@ -52,7 +52,7 @@ public class AdminController {
         return ResponseEntity.ok(result);
     }
 
-    @DeleteMapping(value = "hotel")
+    @DeleteMapping(value = "/hotel")
     public ResponseEntity<?> deleteHotel(@RequestBody Hotel hotel) {
         hotelService.deleteHotel(hotel);
         return ResponseEntity.noContent().build();
