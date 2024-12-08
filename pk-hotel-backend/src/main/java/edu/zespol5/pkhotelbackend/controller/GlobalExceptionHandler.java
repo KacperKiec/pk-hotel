@@ -1,6 +1,6 @@
-package edu.zespol5.pkhotelbackend.exception;
+package edu.zespol5.pkhotelbackend.controller;
 
-import org.springframework.dao.EmptyResultDataAccessException;
+import edu.zespol5.pkhotelbackend.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -57,4 +57,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(IllegalOperationException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalOperationException(IllegalOperationException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("819", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 }

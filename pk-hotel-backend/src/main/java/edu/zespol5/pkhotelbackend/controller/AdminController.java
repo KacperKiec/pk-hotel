@@ -5,6 +5,8 @@ import edu.zespol5.pkhotelbackend.model.Extra;
 import edu.zespol5.pkhotelbackend.model.connectors.RoomConvenienceRequestDTO;
 import edu.zespol5.pkhotelbackend.model.hotel.Hotel;
 import edu.zespol5.pkhotelbackend.model.hotel.HotelDTO;
+import edu.zespol5.pkhotelbackend.model.reservation.Reservation;
+import edu.zespol5.pkhotelbackend.model.reservation.ReservationDTO;
 import edu.zespol5.pkhotelbackend.model.room.Room;
 import edu.zespol5.pkhotelbackend.model.room.RoomDTO;
 import edu.zespol5.pkhotelbackend.model.user.User;
@@ -27,19 +29,27 @@ public class AdminController {
     private final ConvenienceService convenienceService;
     private final ExtraService extraService;
     private final UserService userService;
+    private final ReservationService reservationService;
 
-    public AdminController(RoomService roomService, HotelService hotelService, ConvenienceService convenienceService, ExtraService extraService, UserService userService) {
+    public AdminController(RoomService roomService, HotelService hotelService, ConvenienceService convenienceService, ExtraService extraService, UserService userService, ReservationService reservationService) {
         this.roomService = roomService;
         this.hotelService = hotelService;
         this.convenienceService = convenienceService;
         this.extraService = extraService;
         this.userService = userService;
+        this.reservationService = reservationService;
     }
 
     @PostMapping(value = "/hotel")
     public ResponseEntity<HotelDTO> addHotel(@RequestBody Hotel hotel) {
         var result = hotelService.save(hotel);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    @PatchMapping(value = "/hotel")
+    public ResponseEntity<HotelDTO> updateHotel(@RequestBody Hotel hotel) {
+        var result = hotelService.updateHotel(hotel);
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping(value = "hotel")
@@ -54,13 +64,25 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
+    @PatchMapping(value = "/room")
+    public ResponseEntity<RoomDTO> updateRoom(@RequestBody Room room) {
+        var result = roomService.updateRoom(room);
+        return ResponseEntity.ok(result);
+    }
+
+    @DeleteMapping(value = "/room")
+    public ResponseEntity<?> deleteRoom(@RequestBody Room room) {
+        roomService.deleteRoom(room);
+        return ResponseEntity.noContent().build();
+    }
+
     @PatchMapping(value = "/room-conveniences")
     public ResponseEntity<RoomDTO> addRoomConveniences(@RequestBody RoomConvenienceRequestDTO param) {
         var result = roomService.addConveniences(param.getRoom(), param.getConveniencesIds());
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    @DeleteMapping
+    @DeleteMapping(value = "/room-conveniences")
     public ResponseEntity<?> removeRoomConveniences(@RequestBody RoomConvenienceRequestDTO param) {
         roomService.removeConvenience(param.getRoom(), param.getConveniencesIds().getFirst());
         return ResponseEntity.noContent().build();
@@ -70,6 +92,12 @@ public class AdminController {
     public ResponseEntity<Convenience> addConvenience(@RequestBody Convenience convenience) {
         var result = convenienceService.save(convenience);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    @PatchMapping(value = "/convenience")
+    public ResponseEntity<Convenience> updateConvenience(@RequestBody Convenience convenience) {
+        var result = convenienceService.updateConvenience(convenience);
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping(value = "/convenience")
@@ -89,6 +117,12 @@ public class AdminController {
     public ResponseEntity<Extra> addExtra(@RequestBody Extra extra) {
         var result = extraService.save(extra);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    @PatchMapping(value = "/extra")
+    public ResponseEntity<Extra> updateExtra(@RequestBody Extra extra) {
+        var result = extraService.updateExtra(extra);
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping(value = "/extra")
@@ -132,10 +166,22 @@ public class AdminController {
     }
 
     @DeleteMapping(value = "/user")
-    public ResponseEntity<?> deleteUser(@RequestBody User user, Authentication auth) {
+    public ResponseEntity<?> deleteUser(Authentication auth, @RequestBody User user) {
         var currentUserEmail = auth.getName();
         userService.deleteUser(user, currentUserEmail);
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping(value = "/reservation")
+    public ResponseEntity<Page<ReservationDTO>> getAllReservations(@RequestParam(defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        var result = reservationService.getAllReservations(pageable);
+        return ResponseEntity.ok(result);
+    }
+
+    @PatchMapping(value = "/reservation")
+    public ResponseEntity<ReservationDTO> updateReservation(@RequestBody Reservation reservation) {
+        var result = reservationService.updateReservation(reservation);
+        return ResponseEntity.ok(result);
+    }
 }

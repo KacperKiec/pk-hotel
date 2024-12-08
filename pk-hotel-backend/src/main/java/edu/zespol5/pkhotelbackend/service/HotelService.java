@@ -5,6 +5,7 @@ import edu.zespol5.pkhotelbackend.model.hotel.HotelDTO;
 import edu.zespol5.pkhotelbackend.repository.hotel.HotelRepository;
 import edu.zespol5.pkhotelbackend.repository.hotel.HotelSpecification;
 import edu.zespol5.pkhotelbackend.model.hotel.Hotel;
+import edu.zespol5.pkhotelbackend.repository.review.ReviewRepository;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +14,11 @@ import java.util.List;
 @Service
 public class HotelService {
     private final HotelRepository repository;
+    private final ReviewRepository reviewRepository;
 
-    public HotelService(HotelRepository repository) {
+    public HotelService(HotelRepository repository, ReviewRepository reviewRepository) {
         this.repository = repository;
+        this.reviewRepository = reviewRepository;
     }
 
     public HotelDTO save(Hotel hotel) {
@@ -27,6 +30,38 @@ public class HotelService {
             throw new HotelNotFoundException("Hotel with id " + hotel.getId() + " not found");
         }
         repository.deleteById(hotel.getId());
+    }
+
+    public HotelDTO updateHotel(Hotel hotel) {
+        var existingHotel = repository.findHotelById(hotel.getId()).orElseThrow(
+                () -> new HotelNotFoundException("Hotel not found")
+        );
+
+        if (hotel.getName() != null && !hotel.getName().isEmpty()) {
+            existingHotel.setName(hotel.getName());
+        }
+
+        if (hotel.getOwner() != null && !hotel.getOwner().isEmpty()) {
+            existingHotel.setOwner(hotel.getOwner());
+        }
+
+        if (hotel.getRegisterDate() != null) {
+            existingHotel.setRegisterDate(hotel.getRegisterDate());
+        }
+
+        if (hotel.getCountry() != null && !hotel.getCountry().isEmpty()) {
+            existingHotel.setCountry(hotel.getCountry());
+        }
+
+        if (hotel.getCity() != null && !hotel.getCity().isEmpty()) {
+            existingHotel.setCity(hotel.getCity());
+        }
+
+        if (hotel.getAddress() != null && !hotel.getAddress().isEmpty()) {
+            existingHotel.setAddress(hotel.getAddress());
+        }
+
+        return toDTO(repository.save(existingHotel));
     }
 
     public Hotel getHotelById(int id) {
@@ -63,6 +98,7 @@ public class HotelService {
         dto.setCountry(hotel.getCountry());
         dto.setCity(hotel.getCity());
         dto.setAddress(hotel.getAddress());
+        dto.setRating(reviewRepository.findAverageRatingByHotelId(hotel.getId()));
         return dto;
     }
 }

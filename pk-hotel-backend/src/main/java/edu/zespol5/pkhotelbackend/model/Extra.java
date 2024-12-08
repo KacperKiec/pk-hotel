@@ -11,5 +11,5 @@ public class Extra {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-    private double pricePerDay;
+    private Double pricePerDay;
 }

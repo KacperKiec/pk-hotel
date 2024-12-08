@@ -2,11 +2,8 @@ package edu.zespol5.pkhotelbackend.service;
 
 import edu.zespol5.pkhotelbackend.exception.ConvenienceNotFoundException;
 import edu.zespol5.pkhotelbackend.exception.HotelNotFoundException;
-import edu.zespol5.pkhotelbackend.model.Convenience;
 import edu.zespol5.pkhotelbackend.model.connectors.RoomConvenience;
-import edu.zespol5.pkhotelbackend.model.connectors.RoomConvenienceId;
 import edu.zespol5.pkhotelbackend.model.room.RoomDTO;
-import edu.zespol5.pkhotelbackend.model.room.RoomId;
 import edu.zespol5.pkhotelbackend.repository.convenience.ConvenienceRepository;
 import edu.zespol5.pkhotelbackend.repository.hotel.HotelRepository;
 import edu.zespol5.pkhotelbackend.model.room.Room;
@@ -22,9 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class RoomService {
@@ -60,7 +55,10 @@ public class RoomService {
             );
 
             RoomConvenience roomConvenience = new RoomConvenience(room, conv);
-            existingRoom.addConvenience(roomConvenience);
+
+            if(!existingRoom.getConveniences().contains(roomConvenience)) {
+                existingRoom.addConvenience(roomConvenience);
+            }
         }
 
         return toDTO(roomRepository.save(existingRoom));
@@ -98,6 +96,7 @@ public class RoomService {
 
     public Page<RoomDTO> getRoomsBy(
             Integer hotelId,
+            Integer roomNr,
             Double lowerPriceLimit,
             Double upperPriceLimit,
             RoomStandard standard,
@@ -111,12 +110,43 @@ public class RoomService {
         );
 
         Specification<Room> spec = Specification.where(RoomSpecification.hasHotelId(hotelId))
+                .and(RoomSpecification.hasRoomNr(roomNr))
                 .and(RoomSpecification.hasPlaces(places))
                 .and(RoomSpecification.hasPriceLessOrEqualThan(upperPriceLimit))
                 .and(RoomSpecification.hasPriceGreaterOrEqualThan(lowerPriceLimit))
                 .and(RoomSpecification.hasStandard(standard))
                 .and(RoomSpecification.isAvailable(startDate, endDate));
         return roomRepository.findAll(spec, pageable).map(this::toDTO);
+    }
+
+    public RoomDTO updateRoom(Room room) {
+        var existingRoom = roomRepository.findRoomByHotel_IdAndRoomNr(
+                room.getHotel().getId(), room.getRoomNr()).orElseThrow(
+                        () -> new RoomNotFoundException("Room not found")
+        );
+
+        if (room.getPlaces() > 0) {
+            existingRoom.setPlaces(room.getPlaces());
+        }
+        if (room.getPrice() > 0) {
+            existingRoom.setPrice(room.getPrice());
+        }
+        if (room.getStandard() != null) {
+            existingRoom.setStandard(room.getStandard());
+        }
+        if (room.getDescription() != null) {
+            existingRoom.setDescription(room.getDescription());
+        }
+
+        return toDTO(roomRepository.save(existingRoom));
+    }
+
+    public void deleteRoom(Room room) {
+        roomRepository.findRoomByHotel_IdAndRoomNr(
+                room.getHotel().getId(), room.getRoomNr()).orElseThrow(
+                () -> new RoomNotFoundException("Room not found")
+        );
+        roomRepository.deleteRoomByRoomNrAndHotelId(room.getRoomNr(), room.getHotel().getId());
     }
 
     private RoomDTO toDTO(Room room) {

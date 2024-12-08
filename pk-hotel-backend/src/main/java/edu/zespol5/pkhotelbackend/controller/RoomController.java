@@ -34,6 +34,7 @@ public class RoomController {
     @GetMapping(value = "/search")
     public ResponseEntity<Page<RoomDTO>> getRoomsWithFilters(
             Integer hotelId,
+            Integer roomNr,
             Double lowerPriceLimit,
             Double upperPriceLimit,
             RoomStandard standard,
@@ -44,7 +45,7 @@ public class RoomController {
 
         Pageable pageable = PageRequest.of(page, 10);
         var result = roomService.getRoomsBy(
-                hotelId, lowerPriceLimit, upperPriceLimit, standard, places, startDate, endDate, pageable);
+                hotelId, roomNr, lowerPriceLimit, upperPriceLimit, standard, places, startDate, endDate, pageable);
         return ResponseEntity.ok(result);
     }
 

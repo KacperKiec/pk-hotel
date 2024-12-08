@@ -8,13 +8,10 @@ import edu.zespol5.pkhotelbackend.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/user")
@@ -38,7 +35,7 @@ public class UserController {
     public ResponseEntity<Page<ReservationDTO>> getReservations(Authentication auth, @RequestParam(defaultValue = "0") int page) {
         String email = auth.getName();
         Pageable pageable = PageRequest.of(page, 10);
-        var result = reservationService.getReservationsBy(null, -1, email, pageable);
+        var result = reservationService.getReservationsBy(null, null, email, pageable);
         return ResponseEntity.ok(result);
     }
 

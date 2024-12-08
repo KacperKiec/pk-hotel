@@ -1,5 +1,8 @@
 package edu.zespol5.pkhotelbackend.config;
 
+import edu.zespol5.pkhotelbackend.config.custom.AuthenticationFailureHandler;
+import edu.zespol5.pkhotelbackend.config.custom.LoginSuccessHandler;
+import edu.zespol5.pkhotelbackend.config.custom.LogoutSuccessHandler;
 import edu.zespol5.pkhotelbackend.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -57,8 +60,9 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID"))
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers("/user").authenticated()
+                        .requestMatchers("/user/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/reservation/**").authenticated()
                         .anyRequest().permitAll())
                 .exceptionHandling(handler -> handler
                         .authenticationEntryPoint(authenticationFailureHandler))
