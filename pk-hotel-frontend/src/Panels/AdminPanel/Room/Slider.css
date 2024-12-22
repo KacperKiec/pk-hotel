@@ -1,0 +1,87 @@
+.images-conteiner {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 30px 10px;
+  border: 2px solid lightgray;
+  border-radius: 10px;
+  height: 350px;
+  overflow: hidden; /* Prevent images from spilling out */
+}
+
+.room-image-container {
+  flex-shrink: 0; /* Prevent shrinking */
+  width: 33%; /* Ensures three images take up the full width */
+  display: flex;
+  height: 95%;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 10px 5px;
+}
+
+.room-image-container img {
+  height: 100%;
+}
+
+.room-image-add {
+  width: 100%; /* Makes the image fill its container */
+  height: auto;
+}
+
+.slider-track {
+  display: flex;
+  transition: transform 0.5s ease; /* Smooth sliding */
+}
+
+.delete-image-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: rgb(185, 82, 82);
+  color: white;
+  font-size: 10px;
+  font-weight: bolder;
+  height: auto;
+  border-radius: 20px;
+}
+
+.delete-image-button:visited {
+  background-color: rgb(185, 82, 82);
+}
+
+.prev-btn,
+.next-btn {
+  border: none;
+  margin: 0;
+  border-radius: 0px 9px 9px 0px;
+  position: absolute;
+  top: 0;
+  z-index: 9;
+  width: 40px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #fff 100%);
+  cursor: pointer;
+}
+
+.prev-btn img,
+.next-btn img {
+  opacity: 0.1;
+}
+
+.prev-btn:hover,
+.next-btn:hover {
+  opacity: 1;
+}
+
+.prev-btn {
+  left: 0;
+  transform: rotate(180deg);
+}
+
+.next-btn {
+  right: 0;
+}

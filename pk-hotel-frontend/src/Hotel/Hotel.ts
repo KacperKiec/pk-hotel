@@ -76,6 +76,7 @@ export class Hotel {
   }
 }
 
+// Potrzebne bo klasa hotel zapisuje sie jako _name itd... wiec taka postac nie przejdzie jako body do zapytania, a get i set musza miec inna nazwe niz pole 
 export const transfromHotel = (hotel: Hotel): HotelDTO => {
   return {
     name: hotel.name,
