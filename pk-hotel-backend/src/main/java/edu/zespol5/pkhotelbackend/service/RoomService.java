@@ -42,10 +42,15 @@ public class RoomService {
     }
 
     public RoomDTO saveRoom(Room room) {
-        hotelRepository.findHotelById(room.getHotel().getId()).orElseThrow(
+        var hotel = hotelRepository.findHotelById(room.getHotel().getId()).orElseThrow(
                 () -> new HotelNotFoundException("Hotel not found")
         );
-        return toDTO(roomRepository.save(room));
+        var result = roomRepository.save(room);
+
+        hotel.addRoom(result);
+        hotelRepository.save(hotel);
+
+        return toDTO(result);
     }
 
     @Transactional
@@ -183,11 +188,19 @@ public class RoomService {
         return toDTO(roomRepository.save(existingRoom));
     }
 
+    @Transactional
     public void deleteRoom(Room room) {
-        roomRepository.findRoomByHotel_IdAndRoomNr(
+        var existingRoom = roomRepository.findRoomByHotel_IdAndRoomNr(
                 room.getHotel().getId(), room.getRoomNr()).orElseThrow(
                 () -> new RoomNotFoundException("Room not found")
         );
+
+        var existingHotel = hotelRepository.findHotelById(room.getHotel().getId()).orElseThrow(
+                () -> new HotelNotFoundException("Hotel not found")
+        );
+
+        existingHotel.removeRoom(existingRoom);
+
         roomRepository.deleteRoomByRoomNrAndHotelId(room.getRoomNr(), room.getHotel().getId());
     }
 

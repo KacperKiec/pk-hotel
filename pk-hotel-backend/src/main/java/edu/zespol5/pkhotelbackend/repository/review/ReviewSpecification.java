@@ -1,6 +1,6 @@
 package edu.zespol5.pkhotelbackend.repository.review;
 
-import edu.zespol5.pkhotelbackend.model.Review;
+import edu.zespol5.pkhotelbackend.model.review.Review;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ReviewSpecification {
@@ -14,12 +14,12 @@ public class ReviewSpecification {
         };
     }
 
-    public static Specification<Review> hasClient(Integer clientId){
+    public static Specification<Review> hasClient(String email){
         return (root, query, builder) -> {
-            if(clientId == null){
+            if(email == null || email.isEmpty()){
                 return builder.conjunction();
             }
-            return builder.equal(root.get("client").get("id"), clientId);
+            return builder.equal(root.get("user").get("email"), email);
         };
     }
 

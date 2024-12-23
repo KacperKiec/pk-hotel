@@ -63,6 +63,7 @@ public class SecurityConfig {
                         .requestMatchers("/user/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/reservation/**").authenticated()
+                        .requestMatchers("/hotels/review").authenticated()
                         .anyRequest().permitAll())
                 .exceptionHandling(handler -> handler
                         .authenticationEntryPoint(authenticationFailureHandler))

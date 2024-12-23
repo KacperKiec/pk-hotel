@@ -1,6 +1,7 @@
 package edu.zespol5.pkhotelbackend.service;
 
 import edu.zespol5.pkhotelbackend.exception.ConvenienceNotFoundException;
+import edu.zespol5.pkhotelbackend.exception.ResourceAlreadyExistsException;
 import edu.zespol5.pkhotelbackend.repository.convenience.ConvenienceRepository;
 import edu.zespol5.pkhotelbackend.model.Convenience;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,8 @@ public class ConvenienceService {
     }
 
     public Convenience save(Convenience convenience) {
+        if(repository.findConveniencesByName(convenience.getName()).isPresent())
+            throw new ResourceAlreadyExistsException("Convenience with name " + convenience.getName() + " already exists. Choose one from existing conveniences");
         return repository.save(convenience);
     }
 
@@ -26,14 +29,17 @@ public class ConvenienceService {
     }
 
     public void deleteConvenience(Convenience convenience) {
-        if(!repository.findConvenienceById(convenience.getId()).isPresent()) {
-            throw new ConvenienceNotFoundException("Convenience with id " + convenience.getId() + " not found");
-        }
+        repository.findConvenienceById(convenience.getId()).orElseThrow(
+                () -> new ConvenienceNotFoundException("Convenience with id " + convenience.getId() + " not found")
+        );
+
         repository.deleteById(convenience.getId());
     }
 
     public Convenience updateConvenience(Convenience convenience) {
-        var conv = repository.findConvenienceById(convenience.getId()).get();
+        repository.findConvenienceById(convenience.getId()).orElseThrow(
+                () -> new ConvenienceNotFoundException("Convenience with id " + convenience.getId() + " not found")
+        );
 
         if(convenience.getName() != null) {
             convenience.setName(convenience.getName());
@@ -48,8 +54,10 @@ public class ConvenienceService {
         );
     }
 
-    public List<Convenience> getConveniencesByName(String name) {
-        return repository.findConveniencesByName(name);
+    public Convenience getConveniencesByName(String name) {
+        return repository.findConveniencesByName(name).orElseThrow(
+                () -> new ConvenienceNotFoundException("Convenience with name " + name + " not found")
+        );
     }
 
 }

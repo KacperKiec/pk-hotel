@@ -33,14 +33,14 @@ public class RoomController {
 
     @GetMapping(value = "/search")
     public ResponseEntity<Page<RoomDTO>> getRoomsWithFilters(
-            Integer hotelId,
-            Integer roomNr,
-            Double lowerPriceLimit,
-            Double upperPriceLimit,
-            RoomStandard standard,
-            Integer places,
-            LocalDate startDate,
-            LocalDate endDate,
+            @RequestParam(required = false) Integer hotelId,
+            @RequestParam(required = false) Integer roomNr,
+            @RequestParam(required = false) Double lowerPriceLimit,
+            @RequestParam(required = false) Double upperPriceLimit,
+            @RequestParam(required = false) RoomStandard standard,
+            @RequestParam(required = false) Integer places,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
             @RequestParam(defaultValue = "0") int page) {
 
         Pageable pageable = PageRequest.of(page, 10);

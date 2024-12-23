@@ -1,4 +1,4 @@
-package edu.zespol5.pkhotelbackend.model;
+package edu.zespol5.pkhotelbackend.model.review;
 
 import edu.zespol5.pkhotelbackend.model.hotel.Hotel;
 import edu.zespol5.pkhotelbackend.model.user.User;

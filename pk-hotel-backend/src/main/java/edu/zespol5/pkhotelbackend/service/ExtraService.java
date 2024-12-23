@@ -1,12 +1,14 @@
 package edu.zespol5.pkhotelbackend.service;
 
 import edu.zespol5.pkhotelbackend.exception.ExtraNotFoundException;
+import edu.zespol5.pkhotelbackend.exception.ResourceAlreadyExistsException;
 import edu.zespol5.pkhotelbackend.model.Convenience;
 import edu.zespol5.pkhotelbackend.repository.extra.ExtraRepository;
 import edu.zespol5.pkhotelbackend.repository.extra.ExtraSpecification;
 import edu.zespol5.pkhotelbackend.model.Extra;
 import edu.zespol5.pkhotelbackend.exception.ReservationNotFoundException;
 import edu.zespol5.pkhotelbackend.repository.reservation.ReservationRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,6 +27,8 @@ public class ExtraService {
     }
 
     public Extra save(Extra extra) {
+        if(repository.findExtraByNameAndPricePerDay(extra.getName(), extra.getPricePerDay()).isPresent())
+            throw new ResourceAlreadyExistsException("Extra with name " + extra.getName() + " and price " + extra.getPricePerDay() + " already exists. Choose one from existing extras");
         return repository.save(extra);
     }
 
@@ -32,10 +36,12 @@ public class ExtraService {
         return repository.findAll(pageable);
     }
 
+    @Transactional
     public void deleteExtra(Extra extra) {
-        if(!repository.findExtraById(extra.getId()).isPresent()) {
-            throw new ExtraNotFoundException("Extra with id " + extra.getId() + " not found");
-        }
+        repository.findExtraById(extra.getId()).orElseThrow(
+                () -> new ExtraNotFoundException("Extra with id " + extra.getId() + " not found")
+        );
+
         repository.deleteById(extra.getId());
     }
 

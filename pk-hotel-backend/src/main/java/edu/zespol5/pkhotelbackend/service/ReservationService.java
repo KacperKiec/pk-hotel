@@ -84,6 +84,7 @@ public class ReservationService {
         return toDTO(repository.save(reservation));
     }
 
+    @Transactional
     public ReservationDTO updateReservation(Reservation reservation) {
         var existingReservation = repository.findReservationById(reservation.getId()).orElseThrow(
                 () -> new ReservationNotFoundException("Reservation not found")

@@ -1,13 +1,17 @@
 package edu.zespol5.pkhotelbackend.service;
 
+import edu.zespol5.pkhotelbackend.exception.IllegalOperationException;
 import edu.zespol5.pkhotelbackend.exception.UserNotFoundException;
+import edu.zespol5.pkhotelbackend.model.review.ReviewDTO;
 import edu.zespol5.pkhotelbackend.repository.user.UserRepository;
 import edu.zespol5.pkhotelbackend.exception.HotelNotFoundException;
 import edu.zespol5.pkhotelbackend.repository.hotel.HotelRepository;
-import edu.zespol5.pkhotelbackend.model.Review;
+import edu.zespol5.pkhotelbackend.model.review.Review;
 import edu.zespol5.pkhotelbackend.exception.ReviewNotFoundException;
 import edu.zespol5.pkhotelbackend.repository.review.ReviewRepository;
 import edu.zespol5.pkhotelbackend.repository.review.ReviewSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +29,25 @@ public class ReviewService {
         this.userRepository = userRepository;
     }
 
-    public Review save(Review review) {
-        return repository.save(review);
+    public ReviewDTO addReview(Review review, String email) {
+
+        var existingUser = userRepository.findUserByEmail(email).orElseThrow(
+                () -> new UserNotFoundException("User with email " + review.getUser().getEmail() + " not found")
+        );
+
+        review.setUser(existingUser);
+
+        if(!existingUser.getEmail().equals(email)) {
+            throw new IllegalOperationException("User incompatibility");
+        }
+
+        var existingHotel = hotelRepository.findHotelById(review.getHotel().getId()).orElseThrow(
+                () -> new HotelNotFoundException("Hotel not found")
+        );
+
+        review.setHotel(existingHotel);
+
+        return toDTO(repository.save(review));
     }
 
     public Review getReviewById(int id) {
@@ -35,28 +56,32 @@ public class ReviewService {
         );
     }
 
-    public List<Review> getAllReviews() {
-        return repository.findAll();
+    public Page<ReviewDTO> getAllReviews(Pageable pageable) {
+        return repository.findAll(pageable).map(this::toDTO);
     }
 
-    public List<Review> getReviewsBy(
+    public Page<ReviewDTO> getReviewsBy(
             Integer hotelId,
-            Integer clientId,
+            String clientEmail,
             Integer upperRatingLimit,
-            Integer lowerRatingLimit) {
+            Integer lowerRatingLimit,
+            Pageable pageable) {
 
-        userRepository.findUserById(clientId).orElseThrow(
-                () -> new UserNotFoundException("Client with id " + clientId + " was not found")
-        );
-
-        hotelRepository.findHotelById(hotelId).orElseThrow(
-                () -> new HotelNotFoundException("Hotel with id " + hotelId + " was not found")
-        );
-
-        Specification<Review> spec = Specification.where(ReviewSpecification.hasClient(clientId))
+        Specification<Review> spec = Specification.where(ReviewSpecification.hasClient(clientEmail))
                 .and(ReviewSpecification.hasHotel(hotelId))
                 .and(ReviewSpecification.hasRatingGreaterThan(lowerRatingLimit))
                 .and(ReviewSpecification.hasRatingLessThan(upperRatingLimit));
-        return repository.findAll(spec);
+        return repository.findAll(spec, pageable).map(this::toDTO);
+    }
+
+    private ReviewDTO toDTO(Review review) {
+        ReviewDTO dto = new ReviewDTO();
+        dto.setId(review.getId());
+        dto.setRating(review.getRating());
+        dto.setComment(review.getContent());
+        dto.setUserFirstName(review.getUser().getFirstName());
+        dto.setUserLastName(review.getUser().getLastName());
+        dto.setHotelName(review.getHotel().getName());
+        return dto;
     }
 }

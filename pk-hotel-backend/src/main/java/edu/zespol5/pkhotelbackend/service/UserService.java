@@ -7,6 +7,7 @@ import edu.zespol5.pkhotelbackend.model.user.User;
 import edu.zespol5.pkhotelbackend.model.user.UserDTO;
 import edu.zespol5.pkhotelbackend.model.user.UserRole;
 import edu.zespol5.pkhotelbackend.repository.user.UserRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -114,6 +115,7 @@ public class UserService implements UserDetailsService {
         return repository.findAllByRole(UserRole.ADMIN, pageable).map(this::toDTO);
     }
 
+    @Transactional
     public void deleteUser(User user, String currentUserEmail) {
         var existingUser = repository.findUserByEmail(user.getEmail()).orElseThrow(
                 () -> new UserNotFoundException("User with email " + user.getEmail() + " was not found")

@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface ExtraRepository {
     Extra save(Extra extra);
     Optional<Extra> findExtraById(int id);
+    Optional<Extra> findExtraByNameAndPricePerDay(String name, Double pricePerDay);
     Page<Extra> findAll(Pageable pageable);
     List<Extra> findAll(Specification<Extra> spec);
     void deleteById(int id);

@@ -1,13 +1,17 @@
 package edu.zespol5.pkhotelbackend.controller;
 
 import edu.zespol5.pkhotelbackend.model.reservation.ReservationDTO;
+import edu.zespol5.pkhotelbackend.model.review.Review;
+import edu.zespol5.pkhotelbackend.model.review.ReviewDTO;
 import edu.zespol5.pkhotelbackend.model.user.User;
 import edu.zespol5.pkhotelbackend.model.user.UserDTO;
 import edu.zespol5.pkhotelbackend.service.ReservationService;
+import edu.zespol5.pkhotelbackend.service.ReviewService;
 import edu.zespol5.pkhotelbackend.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -18,10 +22,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
     private final ReservationService reservationService;
+    private final ReviewService reviewService;
 
-    public UserController(UserService userService, ReservationService reservationService) {
+    public UserController(UserService userService, ReservationService reservationService, ReviewService reviewService) {
         this.userService = userService;
         this.reservationService = reservationService;
+        this.reviewService = reviewService;
     }
 
     @GetMapping
@@ -42,6 +48,13 @@ public class UserController {
     @PatchMapping
     public ResponseEntity<UserDTO> updateUser(Authentication auth, @RequestBody User user) {
         var result = userService.updateUser(user);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(value = "/review")
+    public ResponseEntity<Page<ReviewDTO>> getReviews(Authentication auth, @RequestParam(defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        var result = reviewService.getReviewsBy(null, auth.getName(), null, null, pageable);
         return ResponseEntity.ok(result);
     }
 }
