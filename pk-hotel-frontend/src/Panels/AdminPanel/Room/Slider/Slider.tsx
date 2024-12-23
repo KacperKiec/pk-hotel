@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { RoomImage } from "./RoomImage";
+import { RoomImage } from "../RoomImage";
 import "./Slider.css";
 
 interface SliderProps {

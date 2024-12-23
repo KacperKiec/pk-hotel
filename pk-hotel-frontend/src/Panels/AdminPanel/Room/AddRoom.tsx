@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../AdminPanel.css";
 import { InputWithLabel } from "./InputWithLabel";
-import Slider from "./Slider";
+import Slider from "./Slider/Slider";
 import Conveniences from "./Conveniences";
 import { Room, Standard, transformRoom } from "../../../Rooms/Room";
 import {
@@ -9,7 +9,7 @@ import {
   addImageApi,
   addImageProps,
   addRoomApi,
-  Response,
+  findRoomApi,
 } from "../../../Api/Api";
 
 const AddRoom = () => {
@@ -27,6 +27,7 @@ const AddRoom = () => {
   const [currentConvenience, setCurrentConvenience] = useState("");
 
   const [error, setError] = useState("");
+  const [findRoomError, setFindRoomError] = useState("");
   const [confirmMessage, setConfirmMessage] = useState("");
 
   // Type guard to check if the event target is a file input
@@ -59,35 +60,76 @@ const AddRoom = () => {
         ...prev,
         imagesUrl: filePaths,
       }));
-      console.log(filePaths);
     }
   };
 
   const handleConveniencesChange = (value: string) => {
     setCurrentConvenience(value);
-    console.log(currentConvenience);
   };
 
   const handleAddConvenience = (e: React.MouseEvent<HTMLSpanElement>) => {
+    if (currentConvenience === "") return;
     setRoomData((prev) => ({
       ...prev,
       conveniences: [...prev.conveniences, currentConvenience],
     }));
     setCurrentConvenience("");
+  };
+
+  const handleFindRoom = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const response = await findRoomApi(
+      Number(roomData.hotelId),
+      Number(roomData.roomNr)
+    );
+
+    if (response.status === -1) {
+      setFindRoomError("This room isn't existing. It will be created instead.");
+      setRoomData((prev) => ({
+        ...prev,
+        standard: "",
+        places: "",
+        price: "",
+        description: "",
+        imagesUrl: [""],
+        conveniences: [""],
+      }));
+      return;
+    }
+    const foundRoom = response.data;
+    console.log(foundRoom);
+    let imagesUrl: string[] = [];
+    let conveniences: string[] = [];
+
+    foundRoom.images.forEach((element: any) => {
+      imagesUrl.push(element.path);
+    });
+
+    foundRoom.conveniences.forEach((element: any) => {
+      conveniences.push(element.name);
+    });
+
+    if (foundRoom) {
+      setRoomData((prev) => ({
+        ...prev,
+        standard: foundRoom.standard,
+        places: foundRoom.places,
+        description: foundRoom.description,
+        price: foundRoom.price,
+        imagesUrl: imagesUrl,
+        conveniences: conveniences,
+      }));
+    }
     console.log(roomData.conveniences);
   };
 
   const handleDeleteConvenience = (
     e: React.MouseEvent<HTMLSpanElement>,
-    conIdx: number
+    name: string
   ) => {
     setRoomData((prev) => ({
       ...prev,
-      conveniences: prev.conveniences.filter(
-        (value, index) => index !== conIdx
-      ),
+      conveniences: prev.conveniences.filter((value) => name !== value),
     }));
-    console.log(roomData.conveniences);
   };
 
   // Handle change for all inputs
@@ -99,6 +141,7 @@ const AddRoom = () => {
     const { target } = e;
     const { name, value } = target;
     setError("");
+    setFindRoomError("");
     setConfirmMessage("");
 
     // Check if it's a file input and has files
@@ -112,7 +155,6 @@ const AddRoom = () => {
         [name]: value,
       }));
     }
-    console.log(roomData.description);
   };
 
   // Handle form submission
@@ -140,6 +182,7 @@ const AddRoom = () => {
 
     // Proceed with the API call or form submission
     setError("");
+    setFindRoomError("");
 
     const room: Room = new Room({
       roomNr: Number(roomData.roomNr),
@@ -154,7 +197,7 @@ const AddRoom = () => {
       name: "",
     });
 
-    const response: Response = await addRoomApi(transformRoom(room));
+    const response = await addRoomApi(transformRoom(room));
 
     if (response.status !== 201) {
       setError(response.message || "Error while adding room");
@@ -166,7 +209,7 @@ const AddRoom = () => {
       image: room.imagesUrl,
     };
 
-    const imageResponse: Response = await addImageApi(roomImages);
+    const imageResponse = await addImageApi(roomImages);
     if (imageResponse.status !== 201) {
       setError(imageResponse.message || "Error while adding room");
       return;
@@ -174,7 +217,7 @@ const AddRoom = () => {
 
     // Add conveniences and assign to room
     for (const convenienceName of roomData.conveniences) {
-      const convenienceResponse: Response = await addConvenienceAndAssignToRoom(
+      const convenienceResponse = await addConvenienceAndAssignToRoom(
         convenienceName,
         transformRoom(room)
       );
@@ -187,7 +230,7 @@ const AddRoom = () => {
         return;
       }
     }
-
+    setFindRoomError("");
     setConfirmMessage("Room and conveniences added successfully!");
     // Reset roomData after submission
     setRoomData({
@@ -203,9 +246,9 @@ const AddRoom = () => {
   };
 
   return (
-    <div className="add-room-container">
-      <h1 className="add-room-h1">Add Room</h1>
-      <form className="add-room-form" onSubmit={handleSubmit}>
+    <div className="admin-panel-container">
+      <h1 className="admin-panel-h1">Add Room</h1>
+      <form className="admin-panel-form" onSubmit={handleSubmit}>
         <InputWithLabel
           fieldName="hotelId"
           label="Hotel ID"
@@ -221,6 +264,17 @@ const AddRoom = () => {
           onChange={handleChange}
           type="number"
         />
+
+        <div className="submit-errors">
+          <span>
+            {findRoomError !== "" && (
+              <div className="admin-panel-error">{findRoomError}</div>
+            )}
+          </span>
+          <button type="button" className="room-btn" onClick={handleFindRoom}>
+            Find Room
+          </button>
+        </div>
 
         <InputWithLabel
           fieldName="standard"
@@ -277,18 +331,20 @@ const AddRoom = () => {
         />
 
         <Conveniences
-          conveniences={roomData.conveniences}
+          conveniences={roomData.conveniences.filter(
+            (c) => typeof c === "string" && c.trim() !== ""
+          )}
           onClick={handleDeleteConvenience}
         />
 
         <div className="submit-errors">
           <span>
-            {error && <div className="add-room-error">{error}</div>}
+            {error && <div className="admin-panel-error">{error}</div>}
             {confirmMessage && (
               <div className="positive-response">{confirmMessage}</div>
             )}
           </span>
-          <button type="submit" className="save-new-room-btn">
+          <button type="submit" className="room-btn">
             Save
           </button>
         </div>

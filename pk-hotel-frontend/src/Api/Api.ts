@@ -1,6 +1,6 @@
-import { Hotel, HotelDTO } from '../Hotel/Hotel'
+import { HotelDTO } from '../Hotel/Hotel'
 import { RoomDTO } from '../Rooms/Room'
-import { User, transformUser, transformUserDTOToUser } from '../Users/User'
+import { User, UserDTO, transformUser} from '../Users/User'
 const baseUrl = 'http://localhost:8080'
 
 export interface LoginData {
@@ -8,44 +8,43 @@ export interface LoginData {
    password: string
 }
 
-export interface Response {
-   status: number,
-   user?: User,
-   message?: string
-}
-
-export interface UpdateResponse {
-   message: string
-}
-
 // Register API
-export const registerAPI = async (user: User): Promise<Response> => {
+export const registerAPI = async (user: User, password: string): Promise<{ status: number; message?: string; data?: any }> => {
    try{
+      const userToRegister: any = transformUser(user);
+      userToRegister.password = password;
+
       const response = await fetch(`${baseUrl}/register`, {
          method: "POST",
          headers: {
             'Content-Type': 'application/json',
          },
-         body: JSON.stringify(transformUser(user)),
+         body: JSON.stringify(userToRegister),
       });
-      //console.log(JSON.stringify(transformUser(user)));
-      console.log(response.statusText);
-      if(!response.ok){
-         throw new Error(`${response.status}`);
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: response.status,
+            message: errorData.message || "Failed to register.",
+         };
       }
+
+      const data = await response.json();
       return {
          status: response.status,
-      }
+         data,
+      };
    } catch(error: any){
-      const status: number = Number(error.message)
       return {
-         status
-      }
+         status: -1,
+         message: error.message || "An unexpected error occurred while register.",
+      };
    }
 }
 
 
-export const loginApi = async (data: LoginData): Promise<Response> => {
+export const loginApi = async (data: LoginData): Promise<{ status: number; message?: string; data?: UserDTO }> => {
    const params = new URLSearchParams();
    params.append('email', data.email);
    params.append('password', data.password);
@@ -59,27 +58,30 @@ export const loginApi = async (data: LoginData): Promise<Response> => {
          body: params.toString(),
          credentials: 'include',
       });
-      if(!response.ok){
-         throw new Error(`${response.status}`);
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: response.status,
+            message: errorData.message || "Failed to login.",
+         };
       }
-      const loggedUser: User = transformUserDTOToUser(await response.json());
-      let loginResponse: Response = {
-         status: response.status,
-         user: loggedUser
-      };
 
-      return loginResponse;
-   }
-   catch(error: any){
-      const status: number = Number(error.message)
-      return{
-         status: status,
-      }
+      const data = await response.json();
+      return {
+         status: response.status,
+         data,
+      };
+   } catch(error: any){
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while login in.",
+      };
    }
 }
 
-export const updateUserApi = async (updatedUser: User): Promise<UpdateResponse> => {
+export const updateUserApi = async (updatedUser: User): Promise<{ status: number; message?: string; data?: any }> => {
    try{
+      console.log(transformUser(updatedUser));
       const response = await fetch(`${baseUrl}/user`, {
          method: 'PATCH',
          headers: {
@@ -89,20 +91,30 @@ export const updateUserApi = async (updatedUser: User): Promise<UpdateResponse> 
          credentials: 'include',
       });
 
-      if(!response.ok){
-         throw new Error(`Unable to connect to the server. ${response.status}`);
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: -1,
+            message: errorData.message || "Failed to update room.",
+         };
       }
-      const updateResponse: UpdateResponse = await response.json();
-      updateResponse.message = "Saved"
-      return updateResponse;
+
+      const data = await response.json();
+      return {
+         status: response.status,
+         data,
+      };
    } catch(error: any){
-      throw new Error(`Connection refused`);
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while updating the room.",
+      };
    }
 }
 
 export const logoutAPI = async () => {
    try {
-     const response = await fetch('http://localhost:8080/logout', {
+     const response = await fetch(`${baseUrl}/logout`, {
        method: 'POST',
        credentials: 'include', // Ensures cookies (JSESSIONID) are sent with the request
      });
@@ -116,7 +128,7 @@ export const logoutAPI = async () => {
  };
 
 
-export const addHotelApi = async (hotel: HotelDTO): Promise<Response> => {
+export const addHotelApi = async (hotel: HotelDTO): Promise<{ status: number; message?: string; data?: any }> => {
 
    try{
       const response = await fetch(`${baseUrl}/admin/hotel`, {
@@ -127,24 +139,28 @@ export const addHotelApi = async (hotel: HotelDTO): Promise<Response> => {
          body: JSON.stringify(hotel),
          credentials: 'include',
       });
-      if(!response.ok){
-         throw new Error(`${response.status}`);
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: response.status,
+            message: errorData.message || "Failed to add hotel.",
+         };
       }
 
+      const data = await response.json();
       return {
          status: response.status,
-      }
-   }
-   catch(error: any){
-      const status: number = Number(error.message)
-      return{
-         status: status,
-      }
+         data,
+      };
+   } catch(error: any){
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while adding the hotel.",
+      };
    }
 }
 
-export const removeHotelApi = async (id: number): Promise<Response> => {
-
+export const removeHotelApi = async (id: number): Promise<{ status: number; message?: string; data?: any }> => {
    try{
       const response = await fetch(`${baseUrl}/admin/hotel`, {
          method: 'DELETE',
@@ -154,19 +170,56 @@ export const removeHotelApi = async (id: number): Promise<Response> => {
          body: JSON.stringify({id}),
          credentials: 'include',
       });
-      if(!response.ok){
-         throw new Error(`${response.status}`);
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: response.status,
+            message: errorData.message || "Failed to remove hotel.",
+         };
       }
 
       return {
          status: response.status,
-      }
+      };
+   } catch(error: any){
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while removing the hotel.",
+      };
    }
-   catch(error: any){
-      const status: number = Number(error.message)
-      return{
-         status: status,
+}
+
+export const updateHotelApi = async (hotel: HotelDTO, id: number): Promise<{ status: number; message?: string; data?: any }> => {
+   try{
+      const hotelToUpdate: any = hotel;
+      hotelToUpdate.id = id;
+
+      const response = await fetch(`${baseUrl}/admin/hotel`, {
+         method: 'PATCH',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(hotelToUpdate),
+         credentials: 'include',
+      });
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: response.status,
+            message: errorData.message || "Failed to add hotel.",
+         };
       }
+
+      const data = await response.json();
+      return {
+         status: response.status,
+         data,
+      };
+   } catch(error: any){
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while adding the hotel.",
+      };
    }
 }
 
@@ -308,6 +361,70 @@ export const addConvenienceAndAssignToRoom = async (
       return {
          status: -1,
          message: error.message || "An unexpected error occurred while adding convenience and assigning to room.",
+      };
+   }
+};
+
+export const findRoomApi = async (hotelID: number, roomNr: number): Promise<{ status: number; message?: string; data?: any }> => {
+   try {
+      const response = await fetch(`${baseUrl}/rooms/${hotelID}-${roomNr}`, {
+         method: 'GET',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         credentials: 'include',
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: -1,
+            message: errorData.message || "Failed to update room.",
+         };
+      }
+
+      const data = await response.json();
+      return {
+         status: response.status,
+         data,
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while updating the room.",
+      };
+   }
+};
+
+
+export const updateRoomApi = async (room: RoomDTO): Promise<{ status: number; message?: string; data?: any }> => {
+   try {
+      const response = await fetch(`${baseUrl}/admin/room`, {
+         method: 'PATCH',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(room),
+         credentials: 'include',
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: response.status,
+            message: errorData.message || "Failed to update room.",
+         };
+      }
+
+      const data = await response.json();
+      return {
+         status: response.status,
+         data,
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while updating the room.",
       };
    }
 };

@@ -1,56 +1,51 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
-import './style.css';
-import 'boxicons/css/boxicons.min.css';
-import InputField from '../common/InputField'
-import { Link, useNavigate } from 'react-router-dom';
-import { Response, loginApi } from '../Api/Api';
-import { User } from '../Users/User';
+import React, { Dispatch, SetStateAction, useState } from "react";
+import "./style.css";
+import "boxicons/css/boxicons.min.css";
+import InputField from "../common/InputField";
+import { Link, useNavigate } from "react-router-dom";
+import { loginApi } from "../Api/Api";
+import { User, transformUserDTOToUser } from "../Users/User";
 
 interface LoginPageProps {
-  loggedUser: User | undefined,
-  setLoggedUser: Dispatch<SetStateAction<User | undefined>>
+  loggedUser: User | undefined;
+  setLoggedUser: Dispatch<SetStateAction<User | undefined>>;
 }
 
-const LogInPage = ({loggedUser, setLoggedUser}: LoginPageProps) => {
+const LogInPage = ({ loggedUser, setLoggedUser }: LoginPageProps) => {
   // State to manage input values
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
 
-  const [error, setErrors] = useState('');
+  const [error, setErrors] = useState("");
 
   const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value} = e.target;
+    const { name, value } = e.target;
     setFormData((prev) => ({
-      ...prev, 
+      ...prev,
       [name]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); 
-    const response: Response = await loginApi({
-      email: formData.email, 
-      password: formData.password
-    });   
-    if(response.status === 202){
-      setLoggedUser(response.user);
-      navigate("/");
-    }
-    else if(response.status === 404){
-      setErrors('Invalid login credentials.');
+    e.preventDefault();
+    const response = await loginApi({
+      email: formData.email,
+      password: formData.password,
+    });
+    if (response.status !== 202) {
+      setErrors(response.message || "There was an error while login in.");
       setFormData({
-        email: '',
-        password: '',
+        email: "",
+        password: "",
       });
+      return;
     }
-    else{
-      setErrors('Unable to connect to the server.\nPlease try later.');
-    }
-    console.log(response.status);
+    if (response.data) setLoggedUser(transformUserDTOToUser(response.data));
+    navigate("/");
   };
 
   return (
@@ -96,17 +91,13 @@ const LogInPage = ({loggedUser, setLoggedUser}: LoginPageProps) => {
 
           <div className="register">
             <label>
-              Don't have an account?{' '}
+              Don't have an account?{" "}
               <Link className="registerLink login-link" to="/register">
                 Register
               </Link>
             </label>
           </div>
-          {error !== '' && 
-          <div className="login-error-message">
-            {error}
-          </div>
-          }
+          {error !== "" && <div className="login-error-message">{error}</div>}
         </form>
       </div>
     </div>

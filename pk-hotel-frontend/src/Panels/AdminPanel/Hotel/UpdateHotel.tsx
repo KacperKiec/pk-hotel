@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import "../AdminPanel.css";
-import { addHotelApi } from "../../../Api/Api";
 import { Hotel, transfromHotel } from "../../../Hotel/Hotel";
+import { updateHotelApi } from "../../../Api/Api";
 
-const AddHotel = () => {
+const UpdateHotel = () => {
   const [hotelData, setHotelData] = useState({
+    id: "",
     name: "",
     owner: "",
     country: "",
@@ -12,7 +12,7 @@ const AddHotel = () => {
     address: "",
   });
 
-  const handleChange = (  
+  const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: keyof typeof hotelData
   ) => {
@@ -46,27 +46,37 @@ const AddHotel = () => {
     setError("");
 
     // Proceed with API call
-    const hotel: Hotel = new Hotel(hotelData);
-    const response = await addHotelApi(transfromHotel(hotel));
+    const hotel: Hotel = new Hotel({
+      name: hotelData.name,
+      owner: hotelData.owner,
+      country: hotelData.country,
+      city: hotelData.city,
+      address: hotelData.address,
+    });
+    const response = await updateHotelApi(
+      transfromHotel(hotel),
+      Number(hotelData.id)
+    );
 
-    if (response.status !== 201) {
-      setError(response.message || "Error while adding hotel.");
+    if (response.status !== 200) {
+      setError(response.message || "Error while updating hotel.");
       return;
-    } 
+    }
 
-    setConfirmMessage("Hotel was added.");
+    setConfirmMessage("Hotel was updated.");
     setHotelData({
+      id: "",
       name: "",
       owner: "",
       country: "",
       city: "",
       address: "",
     });
-  }
+  };
 
   return (
     <div className="admin-panel-container">
-      <h1 className="admin-panel-h1">Add hotel</h1>
+      <h1 className="admin-panel-h1">Update hotel</h1>
       <form className="admin-panel-form" onSubmit={handleSubmit}>
         {Object.keys(hotelData).map((key) => {
           const field = key as keyof typeof hotelData;
@@ -88,8 +98,10 @@ const AddHotel = () => {
         })}
         <div className="submit-errors">
           <span>
-            {error.length > 0 && <div className="admin-panel-error">{error}</div>}
-            {confirmMessage === "Hotel was added." ? (
+            {error.length > 0 && (
+              <div className="admin-panel-error">{error}</div>
+            )}
+            {confirmMessage === "Hotel was updated." ? (
               <div className="positive-response">{confirmMessage}</div>
             ) : (
               <div className="admin-panel-error">{confirmMessage}</div>
@@ -104,4 +116,4 @@ const AddHotel = () => {
   );
 };
 
-export default AddHotel;
+export default UpdateHotel;

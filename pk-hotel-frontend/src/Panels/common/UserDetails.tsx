@@ -9,7 +9,10 @@ interface UserDetailsProps {
   setLoggedUser: Dispatch<SetStateAction<User | undefined>>;
 }
 
-const UserDetails: React.FC<UserDetailsProps> = ({ loggedUser, setLoggedUser }: UserDetailsProps) => {
+const UserDetails: React.FC<UserDetailsProps> = ({
+  loggedUser,
+  setLoggedUser,
+}: UserDetailsProps) => {
   const navigator = useNavigate();
   const [isEditing, setIsEditing] = useState({
     name: false,
@@ -32,59 +35,58 @@ const UserDetails: React.FC<UserDetailsProps> = ({ loggedUser, setLoggedUser }: 
     setIsEditing({ ...isEditing, [field]: true });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof typeof userData) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: keyof typeof userData
+  ) => {
     setUserData({ ...userData, [field]: e.target.value });
   };
 
   const handleSave = async (field: keyof typeof isEditing) => {
     setIsEditing({ ...isEditing, [field]: false });
-    //console.log(`SAVE ${field}`);
-    // Tylko te które da sie zmienić reszta idzie z zalogowanego usera
+
     const updatedUser = new User({
       name: userData.name,
       surname: userData.surname,
-     // email: userData.email,
       email: loggedUser.email,
       birthDate: userData.birthDate,
-      password: loggedUser.password,
       id: loggedUser.id,
-      role: loggedUser.role
+      role: loggedUser.role,
     });
-    
-    try{
-      await updateUserApi(updatedUser);
-      //zmien aktualnie zalogowanego uzytkownika
-      setLoggedUser(updatedUser);
-    }catch(error: any){
+
+    const response = await updateUserApi(updatedUser);
+
+    console.log(updatedUser);
+    if (response.status === -1) {
       setUpdateError(true);
       //zmien wartosc inputow spowrotem na zalogowanego uzytkownika
       setUserData({
         name: loggedUser.name,
         surname: loggedUser.surname,
-        birthDate: loggedUser.birthDate
+        birthDate: loggedUser.birthDate,
       });
+      return;
     }
+    //zmien aktualnie zalogowanego uzytkownika
+    setLoggedUser(updatedUser);
   };
 
   const handleLogout = async (e: any) => {
     setLoggedUser(undefined);
-    try{
+    try {
       await logoutAPI();
-      navigator('/');
-    }catch(error){
+      navigator("/");
+    } catch (error) {
       setLogoutError(true);
     }
-  }
+  };
 
   return (
     <div className="user-details">
       <div className="h1-logout">
         <h1 className="user-details-h1">User details</h1>
-        <button 
-          className="logout"
-          onClick={handleLogout}  
-        > 
-        Logout
+        <button className="logout" onClick={handleLogout}>
+          Logout
         </button>
       </div>
       {Object.keys(userData).map((key) => {
@@ -103,29 +105,35 @@ const UserDetails: React.FC<UserDetailsProps> = ({ loggedUser, setLoggedUser }: 
                 className="user-details__input"
               />
               {isEditing[field] ? (
-                <button className="user-details__button" onClick={() => handleSave(field)}>
+                <button
+                  className="user-details__button"
+                  onClick={() => handleSave(field)}
+                >
                   Save
                 </button>
               ) : (
-                <button className="user-details__button" onClick={() => handleEdit(field)}>
+                <button
+                  className="user-details__button"
+                  onClick={() => handleEdit(field)}
+                >
                   Edit
                 </button>
               )}
             </div>
-           
           </div>
         );
       })}
-      { updateError && 
+      {updateError && (
         <div className="update-user-error">
-          There was a problem with updating your profile. Please try again later.
+          There was a problem with updating your profile. Please try again
+          later.
         </div>
-      }
-      { logoutError && 
+      )}
+      {logoutError && (
         <div className="update-user-error">
           There was a problem with loging out, try again.
         </div>
-      }
+      )}
     </div>
   );
 };
