@@ -1,5 +1,3 @@
-import { UserInfo } from "os";
-
 export type Role = "ADMIN" | "CLIENT";
 
 export class User {
@@ -7,16 +5,15 @@ export class User {
     private _id: number | undefined;
     private _name: string;
     private _surname: string;
-    private _password: string;
     private _email: string;
     private _role: Role;
     private _birthDate: string;
   
     // Constructor to initialize the User
     constructor(initializer: Omit<User, 'id'> & Partial<Pick<User, 'id'>>) {
+      this._id = initializer.id;
       this._name = initializer.name;
       this._surname = initializer.surname;
-      this._password = initializer.password;
       this._email = initializer.email;
       this._role = initializer.role;
       this._birthDate = initializer.birthDate;
@@ -54,19 +51,7 @@ export class User {
       }
       this._name = value;
     }
-  
-    // Getter and setter for password (typically, you'd avoid exposing password directly)
-    public get password(): string {
-      return this._password;
-    }
-  
-    public set password(value: string) {
-      if (value.trim().length < 6) {
-        throw new Error("Password must be at least 6 characters long");
-      }
-      this._password = value;
-    }
-  
+
     // Getter and setter for email
     public get email(): string {
       return this._email;
@@ -98,20 +83,20 @@ export class User {
   }
   
 export type UserDTO = {
+  id: number;
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
   role: Role;
   birthDate: string;
 };
 
 export const transformUser = (user: any): UserDTO => {
   return {
+    id: user._id,
     firstName: user._name,
     lastName: user._surname,
     email: user._email,
-    password: user._password,
     role: user._role,
     birthDate: user._birthDate,
   };
@@ -119,9 +104,9 @@ export const transformUser = (user: any): UserDTO => {
 
 export const transformUserDTOToUser = (userDTO: UserDTO): User => {
   return new User({
+    id: userDTO.id,
     name: userDTO.firstName,
     surname: userDTO.lastName,
-    password: userDTO.password,
     email: userDTO.email,
     role: userDTO.role,
     birthDate: userDTO.birthDate,

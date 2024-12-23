@@ -1,7 +1,7 @@
-.add-hotel-form {
+.admin-panel-form {
   all: unset;
 }
-.add-hotel__field {
+.admin-panel__field {
   display: flex;
   flex-direction: column;
   background-color: #f9f9f9;
@@ -10,7 +10,7 @@
   margin-top: 20px;
 }
 
-.add-hotel__input {
+.admin-panel__input {
   flex-grow: 1;
   padding: 8px;
   border: 1px solid #ccc;
@@ -26,7 +26,7 @@
   justify-content: space-between;
 }
 
-.add-hotel-error {
+.admin-panel-error {
   color: red;
   text-align: center;
   margin-left: 30px;
@@ -47,38 +47,13 @@
   background-color: #007bff;
   color: white;
 }
-.add-hotel-h1 {
+.admin-panel-h1 {
   margin-left: 20px;
   margin-top: 30px;
 }
 
 .positive-response {
   color: green;
-  text-align: center;
-  margin-left: 30px;
-}
-
-.delete-hotel-form {
-  all: unset;
-  margin-left: 30px;
-}
-
-.delete-hotel-h1 {
-  margin-left: 20px;
-  margin-top: 30px;
-}
-
-.delete-hotel-input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  background-color: #e9ecef;
-  margin-left: 20px;
-}
-
-.delete-hotel {
-  color: red;
   text-align: center;
   margin-left: 30px;
 }
@@ -98,10 +73,10 @@
   transition: background-color 0.2s;
 }
 
-.add-room-form {
+.admin-panel-form {
   all: unset;
 }
-.add-room__field {
+.admin-panel__field {
   display: flex;
   flex-direction: column;
   background-color: #f9f9f9;
@@ -110,23 +85,7 @@
   margin-top: 20px;
 }
 
-.add-room__input {
-  flex-grow: 1;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  background-color: #e9ecef;
-  margin: 0;
-}
-
-.add-room-error {
-  color: red;
-  text-align: center;
-  margin-left: 30px;
-}
-
-.save-new-room-btn {
+.room-btn {
   display: inline;
   width: fit-content;
   padding: 6px 12px;
@@ -141,17 +100,9 @@
   background-color: #007bff;
   color: white;
 }
-.add-room-h1 {
-  margin-left: 20px;
-  margin-top: 30px;
-}
 
 textarea {
   resize: none;
-}
-
-.add-room-inputs {
-  display: inline;
 }
 
 .currency {
@@ -193,4 +144,3 @@ textarea {
 .convenience-block:hover {
   background-color: #c25a5a;
 }
-

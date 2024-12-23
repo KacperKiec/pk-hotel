@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../AdminPanel.css";
-import { removeHotelApi, Response } from "../../../Api/Api";
+import { removeHotelApi } from "../../../Api/Api";
 
 export const DeleteHotel = () => {
   const [hotelId, setHotelId] = useState("");
@@ -16,42 +16,44 @@ export const DeleteHotel = () => {
       setMessage("Id must be filled.");
       return;
     }
-    const response: Response = await removeHotelApi(Number(hotelId));
-    if (response.status === 204) {
-      setMessage("Hotel was removed.");
-      setHotelId("");
-    } else if (response.status === 404) {
-      setMessage("There is no hotel with this ID.");
-    } else {
-      setMessage("Unable to connect to the server.");
+    const response = await removeHotelApi(Number(hotelId));
+    if (response.status !== 204) {
+      setMessage(response.message || "Error while deleting the hotel.");
+      return;
     }
+    setMessage("Hotel was removed.");
+    setHotelId("");
   };
 
   return (
-    <div className="delete-hotel-container">
-      <h1 className="delete-hotel-h1">Delete hotel</h1>
-      <form className="delete-hotel-form" onSubmit={handleSubmit}>
-        <label className="delete-hotel-label">ID</label>
-        <div>
-          <input
-            name="id"
-            type="number"
-            value={hotelId}
-            onChange={handleChange}
-            className="delete-hotel-input"
-          />
+    <div className="admin-panel-container">
+      <h1 className="admin-panel-h1">Delete hotel</h1>
+      <form className="admin-panel-form" onSubmit={handleSubmit}>
+        <div className="admin-panel__field">
+          <label className="admin-panel__label">ID</label>
+          <div>
+            <input
+              name="id"
+              type="number"
+              value={hotelId}
+              onChange={handleChange}
+              className="admin-panel__input"
+            />
+          </div>
         </div>
         <div className="submit-errors">
           <span>
             <div
-              className={`delete-hotel ${
-                message.includes("Hotel was removed.") ? "positive-message" : ""
+              className={`admin-panel${
+                message.includes("Hotel was removed.")
+                  ? " positive-message"
+                  : "-error"
               }`}
             >
               {message}
             </div>
           </span>
-          <button type="submit" className="delete-hotel-btn">
+          <button type="submit" className="admin-panel-btn">
             Save
           </button>
         </div>

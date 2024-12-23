@@ -49,7 +49,7 @@ export const InputWithLabel = ({
         rows={6}
         value={value as string}
         onChange={onChange}
-        className="add-room__input"
+        className="admin-panel__input"
       />
     );
   } else if (type === "file") {
@@ -58,7 +58,7 @@ export const InputWithLabel = ({
         name={fieldName}
         type={type}
         onChange={onChange} // Handle file change
-        className="add-room__input"
+        className="admin-panel__input"
         multiple
       />
     );
@@ -69,15 +69,15 @@ export const InputWithLabel = ({
         type={type}
         value={value as string}
         onChange={onChange}
-        className="add-room__input"
+        className="admin-panel__input"
       />
     );
   }
 
   return (
-    <div key={fieldName} className="add-room__field">
-      <label className="add-room__label">{label}</label>
-      <div className="add-room-inputs">
+    <div key={fieldName} className="admin-panel__field">
+      <label className="admin-panel__label">{label}</label>
+      <div className="admin-panel-inputs">
         {inputElement}
         {fieldName === "price" && <label className="currency">zł</label>}
         {onClick !== undefined && (

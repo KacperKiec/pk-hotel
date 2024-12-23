@@ -1,5 +1,5 @@
 import React from "react";
-import "./Slider.css";
+import "./Slider/Slider.css";
 
 interface RoomImageInterface {
   imageUrl: string;
@@ -27,7 +27,7 @@ export const RoomImage = ({ imageUrl, setRoomData }: RoomImageInterface) => {
 
   return (
     <div className="room-image-container">
-      <img src={imageUrl} alt="Room image" className="room-image-add" />
+      <img src={imageUrl} alt="Room-image" className="room-image-add" />
       <button className="delete-image-button" type="button" onClick={onClick}>
         Delete
       </button>

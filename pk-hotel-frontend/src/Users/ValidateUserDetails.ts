@@ -5,7 +5,7 @@ interface ValidationResult {
   errors: string[];
 }
 
-export const validateUserDetails = (user: User): ValidationResult => {
+export const validateUserDetails = (user: User, password:string): ValidationResult => {
   const errors: string[] = [];
 
   // Validate name
@@ -37,11 +37,11 @@ export const validateUserDetails = (user: User): ValidationResult => {
     { regex: /[!@#$%^&*(),.?":{}|<>]/, message: "Password must contain at least one special character." },
   ];
 
-  if (!user.password || user.password.trim().length === 0) {
+  if (!password || password.trim().length === 0) {
     errors.push("Password cannot be empty.");
   } else {
     passwordCriteria.forEach((criteria) => {
-      if (!criteria.regex.test(user.password)) {
+      if (!criteria.regex.test(password)) {
         errors.push(criteria.message);
       }
     });
