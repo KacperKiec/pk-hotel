@@ -1,8 +1,9 @@
 import React from "react";
 import "../AdminPanel.css";
+import { Convenience } from "./AddRoom";
 
 interface ConveniencesProps {
-  conveniences: string[];
+  conveniences: Convenience[];
   onClick: (e: any, name: string) => void;
 }
 
@@ -11,13 +12,13 @@ export const Conveniences = ({ conveniences, onClick }: ConveniencesProps) => {
     <div className="conveniences-container">
       {conveniences.map(
         (element, index) =>
-          element !== "" && (
+          element.name !== "" && (
             <span
               key={index}
               className="convenience-block"
-              onClick={(e) => onClick(e, element)}
+              onClick={(e) => onClick(e, element.name)}
             >
-              {element}
+              {element.name}
             </span>
           )
       )}

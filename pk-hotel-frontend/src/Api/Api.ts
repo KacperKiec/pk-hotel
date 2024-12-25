@@ -1,4 +1,6 @@
 import { HotelDTO } from '../Hotel/Hotel'
+import { Convenience, Images } from '../Panels/AdminPanel/Room/AddRoom'
+import Conveniences from '../Panels/AdminPanel/Room/Conveniences'
 import { RoomDTO } from '../Rooms/Room'
 import { User, UserDTO, transformUser} from '../Users/User'
 const baseUrl = 'http://localhost:8080'
@@ -42,7 +44,6 @@ export const registerAPI = async (user: User, password: string): Promise<{ statu
       };
    }
 }
-
 
 export const loginApi = async (data: LoginData): Promise<{ status: number; message?: string; data?: UserDTO }> => {
    const params = new URLSearchParams();
@@ -125,8 +126,7 @@ export const logoutAPI = async () => {
    } catch (error) {
      console.error('Error during logout:', error);
    }
- };
-
+}
 
 export const addHotelApi = async (hotel: HotelDTO): Promise<{ status: number; message?: string; data?: any }> => {
 
@@ -253,22 +253,19 @@ export const addRoomApi = async (room: RoomDTO): Promise<{ status: number; messa
          message: error.message || "An unexpected error occurred while adding the room.",
       };
    }
-};
-
+}
 
 export interface addImageProps {
    room: RoomDTO,
-   image: string[]
+   images: Images[]
 }
 
-export const addImageApi = async (roomImage: addImageProps): Promise<{ status: number; message?: string }> => {
+export const addImageApi = async (roomImages: addImageProps): Promise<{ status: number; message?: string; images?: Images[] }> => {
    try {
-      const imagesWithPaths = roomImage.image.map((img) => ({ path: img }));
-
       // Prepare the updated request payload
       const payload = {
-         room: roomImage.room,
-         images: imagesWithPaths, // Use the transformed array here
+         room: roomImages.room,
+         images: roomImages.images, // Use the transformed array here
       };
 
       const response = await fetch(`${baseUrl}/admin/room-image`, {
@@ -288,8 +285,12 @@ export const addImageApi = async (roomImage: addImageProps): Promise<{ status: n
          };
       }
 
+      const data = await response.json();
+      console.log(data);
+
       return {
          status: response.status,
+         images: data.images,
       };
    } catch (error: any) {
       return {
@@ -297,44 +298,68 @@ export const addImageApi = async (roomImage: addImageProps): Promise<{ status: n
          message: error.message || "An unexpected error occurred while adding images.",
       };
    }
-};
-
-
-export interface addConveniencesToRoomProps {
-   room: RoomDTO,
-   conveniencesIds: number[]
 }
 
+interface addConveniencesToRoomProps {
+   room: RoomDTO;
+   conveniencesIds: number[]
+}
 
 export const addConvenienceAndAssignToRoom = async (
    name: string,
    room: RoomDTO
-): Promise<{ status: number; message?: string }> => {
+): Promise<{ status: number; message?: string; convenience?: Convenience }> => {
    try {
-      // Step 1: Add convenience
-      const convenienceResponse = await fetch(`${baseUrl}/admin/convenience`, {
-         method: 'POST',
+      // Step 1: Get all conveniences and check if the desired one exists
+      const allConveniencesResponse = await fetch(`${baseUrl}/admin/convenience?page=0`, {
+         method: 'GET',
          headers: {
             'Content-Type': 'application/json',
          },
-         body: JSON.stringify({ name }),
          credentials: 'include',
       });
 
-      if (!convenienceResponse.ok) {
-         const errorData = await convenienceResponse.json();
+      if (!allConveniencesResponse.ok) {
+         const errorData = await allConveniencesResponse.json();
          return {
-            status: convenienceResponse.status,
-            message: errorData.message || "Failed to add convenience.",
+            status: allConveniencesResponse.status,
+            message: errorData.message || "Failed to fetch conveniences.",
          };
       }
 
-      const addedConvenience = await convenienceResponse.json(); // { id: number, name: string }
+      const allConveniences = await allConveniencesResponse.json(); // { content: Convenience[] }
+      const existingConvenience = allConveniences.content.find((c: Convenience) => c.name.toLowerCase() === name.toLowerCase());
+      let convenience;
 
-      // Step 2: Assign the convenience to the room
+      if (existingConvenience) {
+         // If convenience exists, use it
+         convenience = existingConvenience;
+      } else {
+         // Step 2: Add convenience
+         const convenienceResponse = await fetch(`${baseUrl}/admin/convenience`, {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name }),
+            credentials: 'include',
+         });
+
+         if (!convenienceResponse.ok) {
+            const errorData = await convenienceResponse.json();
+            return {
+               status: convenienceResponse.status,
+               message: errorData.message || "Failed to add convenience.",
+            };
+         }
+
+         convenience = await convenienceResponse.json(); // { id: number, name: string }
+      }
+
+      // Step 3: Assign the convenience to the room
       const roomConveniences: addConveniencesToRoomProps = {
          room: room,
-         conveniencesIds: [addedConvenience.id],
+         conveniencesIds: [convenience.id],
       };
 
       const assignResponse = await fetch(`${baseUrl}/admin/room-conveniences`, {
@@ -356,6 +381,7 @@ export const addConvenienceAndAssignToRoom = async (
 
       return {
          status: assignResponse.status,
+         convenience,
       };
    } catch (error: any) {
       return {
@@ -364,6 +390,7 @@ export const addConvenienceAndAssignToRoom = async (
       };
    }
 };
+
 
 export const findRoomApi = async (hotelID: number, roomNr: number): Promise<{ status: number; message?: string; data?: any }> => {
    try {
@@ -394,8 +421,7 @@ export const findRoomApi = async (hotelID: number, roomNr: number): Promise<{ st
          message: error.message || "An unexpected error occurred while updating the room.",
       };
    }
-};
-
+}
 
 export const updateRoomApi = async (room: RoomDTO): Promise<{ status: number; message?: string; data?: any }> => {
    try {
@@ -411,7 +437,7 @@ export const updateRoomApi = async (room: RoomDTO): Promise<{ status: number; me
       if (!response.ok) {
          const errorData = await response.json();
          return {
-            status: response.status,
+            status: -1,
             message: errorData.message || "Failed to update room.",
          };
       }
@@ -427,4 +453,139 @@ export const updateRoomApi = async (room: RoomDTO): Promise<{ status: number; me
          message: error.message || "An unexpected error occurred while updating the room.",
       };
    }
+}
+
+export const removeRoomConveniencesApi = async (roomNr: number, hotelID: number, convenienvesIDs: number[]): Promise<{ status: number; message?: string;}> => {
+   try {
+      const response = await fetch(`${baseUrl}/admin/room-conveniences`, {
+         method: 'DELETE',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({
+            room: {
+               roomNr,
+               hotel: {
+                  id: hotelID
+               }
+            },
+            convenienveIds: convenienvesIDs
+         }),
+         credentials: 'include',
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: -1,
+            message: errorData.message || "Failed to delete convenience.",
+         };
+      }
+
+      return {
+         status: response.status,
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while deleting the conveniece.",
+      };
+   }
+}
+
+export const removeConvenienceApi = async (convenienveID: number): Promise<{ status: number; message?: string;}> => {
+   try {
+      const response = await fetch(`${baseUrl}/admin/room-conveniences`, {
+         method: 'DELETE',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({
+            convenienveId: convenienveID
+         }),
+         credentials: 'include',
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: -1,
+            message: errorData.message || "Failed to delete convenience.",
+         };
+      }
+
+      return {
+         status: response.status,
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while deleting the convenience.",
+      };
+   }
+}
+
+export const findHotelByName = async (name: string): Promise<{ status: number; message?: string; data?: any }> => {
+   try {
+      const response = await fetch(`${baseUrl}/hotels/search?name=${encodeURIComponent(name)}`, {
+         method: 'GET',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         credentials: 'include',
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: response.status,
+            message: errorData.message || "Failed to find this hotel.",
+         };
+      }
+
+      const data = await response.json();
+      return {
+         status: response.status,
+         data: data.content, // Assuming the response has a `content` property
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while searching for the hotel.",
+      };
+   }
 };
+
+export const removeRoomApi = async (hotelId: number, roomNr:number): Promise<{ status: number; message?: string; data?: any }> => {
+   try{
+      const response = await fetch(`${baseUrl}/admin/room`, {
+         method: 'DELETE',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({
+            hotel:{
+               id: hotelId
+            },
+            roomNr
+         }),
+         credentials: 'include',
+      });
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: response.status,
+            message: errorData.message || "Failed to remove a room.",
+         };
+      }
+
+      return {
+         status: response.status,
+      };
+   } catch(error: any){
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while removing the room.",
+      };
+   }
+}

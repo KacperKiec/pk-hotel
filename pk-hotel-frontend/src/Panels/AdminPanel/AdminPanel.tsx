@@ -5,6 +5,7 @@ import AddHotel from "./Hotel/AddHotel";
 import { DeleteHotel } from "./Hotel/DeleteHotel";
 import AddRoom from "./Room/AddRoom";
 import UpdateHotel from "./Hotel/UpdateHotel";
+import DeleteRoom from "./Room/DeleteRoom";
 
 export const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState(1);
@@ -13,6 +14,7 @@ export const AdminPanel = () => {
     "Delete Hotel",
     "Update Hotel",
     "Add/Update Room",
+    "Delete Room",
   ];
   return (
     <div className="user-panel-container">
@@ -25,6 +27,7 @@ export const AdminPanel = () => {
       {activeTab === 2 && <DeleteHotel />}
       {activeTab === 3 && <UpdateHotel />}
       {activeTab === 4 && <AddRoom />}
+      {activeTab === 5 && <DeleteRoom />}
     </div>
   );
 };

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { RoomImage } from "../RoomImage";
 import "./Slider.css";
+import { Convenience, Images } from "../AddRoom";
 
 interface SliderProps {
-  imagesUrl: string[];
+  images: Images[];
   setRoomData: React.Dispatch<
     React.SetStateAction<{
       hotelId: string;
@@ -12,16 +13,16 @@ interface SliderProps {
       places: string;
       price: string;
       description: string;
-      imagesUrl: string[];
-      conveniences: string[];
+      images: Images[];
+      conveniences: Convenience[];
     }>
   >;
 }
 
-const Slider = ({ imagesUrl, setRoomData }: SliderProps) => {
+const Slider = ({ images, setRoomData }: SliderProps) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const totalSlides = imagesUrl.length + 1;
+  const totalSlides = images.length + 1;
   const slidesToShow = 3;
 
   const handleNext = () => {
@@ -47,8 +48,8 @@ const Slider = ({ imagesUrl, setRoomData }: SliderProps) => {
           transform: `translateX(-${currentSlide * (100 / slidesToShow)}%)`,
         }}
       >
-        {imagesUrl.map((element, index) => (
-          <RoomImage key={index} imageUrl={element} setRoomData={setRoomData} />
+        {images.map((element, index) => (
+          <RoomImage key={index} image={element} setRoomData={setRoomData} />
         ))}
       </div>
       <button className="next-btn" type="button" onClick={handleNext}>

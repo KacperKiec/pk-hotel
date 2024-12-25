@@ -1,6 +1,7 @@
 // Rooms standards used for filtering results
 export type Standard = 'LOW' | 'AVERAGE' | 'HIGH';
 
+
 // Main class that contains all the important information for searching
 export class Room {
   // Private fields
