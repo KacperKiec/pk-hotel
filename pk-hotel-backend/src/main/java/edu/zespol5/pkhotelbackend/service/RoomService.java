@@ -1,8 +1,6 @@
 package edu.zespol5.pkhotelbackend.service;
 
-import edu.zespol5.pkhotelbackend.exception.ConvenienceNotFoundException;
-import edu.zespol5.pkhotelbackend.exception.HotelNotFoundException;
-import edu.zespol5.pkhotelbackend.exception.ImageNotFoundException;
+import edu.zespol5.pkhotelbackend.exception.*;
 import edu.zespol5.pkhotelbackend.model.Image;
 import edu.zespol5.pkhotelbackend.model.room_convenience.RoomConvenience;
 import edu.zespol5.pkhotelbackend.model.room.RoomDTO;
@@ -11,11 +9,11 @@ import edu.zespol5.pkhotelbackend.repository.convenience.ConvenienceRepository;
 import edu.zespol5.pkhotelbackend.repository.hotel.HotelRepository;
 import edu.zespol5.pkhotelbackend.model.room.Room;
 import edu.zespol5.pkhotelbackend.model.room.RoomStandard;
-import edu.zespol5.pkhotelbackend.exception.RoomNotFoundException;
 import edu.zespol5.pkhotelbackend.repository.image.ImageRepository;
 import edu.zespol5.pkhotelbackend.repository.review.ReviewRepository;
 import edu.zespol5.pkhotelbackend.repository.room.RoomRepository;
 import edu.zespol5.pkhotelbackend.repository.room.RoomSpecification;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +43,10 @@ public class RoomService {
         var hotel = hotelRepository.findHotelById(room.getHotel().getId()).orElseThrow(
                 () -> new HotelNotFoundException("Hotel not found")
         );
+
+        if(roomRepository.findRoomByHotel_IdAndRoomNr(room.getHotel().getId(), room.getRoomNr()).isPresent()) {
+            throw new ResourceAlreadyExistsException("Room for hotel with id " + room.getHotel().getId() + " and room number " + room.getRoomNr() + " already exists");
+        }
         var result = roomRepository.save(room);
 
         hotel.addRoom(result);
@@ -76,19 +78,22 @@ public class RoomService {
     }
 
     @Transactional
-    public void removeConvenience(Room room, Integer convenienceId) {
+    public void removeConvenience(Room room, List<Integer> convenienceId) {
         var existingRoom = roomRepository.findRoomByHotel_IdAndRoomNr(room.getHotel().getId(), room.getRoomNr()).orElseThrow(
                 () -> new RoomNotFoundException("Room not found")
         );
 
-        var convenience = existingRoom.getConveniences().stream()
-                .filter(conv -> conv.getConvenience().getId().equals(convenienceId))
-                .findFirst()
-                .orElseThrow(
-                        () -> new ConvenienceNotFoundException("Convenience not found")
-                );
 
-        existingRoom.removeConvenience(convenience);
+        for(Integer id : convenienceId) {
+            var convenience = existingRoom.getConveniences().stream()
+                    .filter(conv -> conv.getConvenience().getId().equals(id))
+                    .findFirst()
+                    .orElseThrow(
+                            () -> new ConvenienceNotFoundException("Convenience not found")
+                    );
+
+            existingRoom.removeConvenience(convenience);
+        }
         roomRepository.save(existingRoom);
     }
 
@@ -112,20 +117,21 @@ public class RoomService {
     }
 
     @Transactional
-    public void removeImage(Room room, Integer imageId) {
+    public void removeImage(Room room, List<Image> images) {
         var existingRoom = roomRepository.findRoomByHotel_IdAndRoomNr(room.getHotel().getId(), room.getRoomNr()).orElseThrow(
                 () -> new RoomNotFoundException("Room not found")
         );
 
-        var image = existingRoom.getImages().stream()
-                .filter(img -> img.getImage().getId().equals(imageId))
-                .findFirst()
-                .orElseThrow(
-                        () -> new ImageNotFoundException("Image with id " + imageId + " was not found")
-                );
-
-        existingRoom.removeImage(image);
-        imageRepository.deleteById(image.getImage().getId());
+        for (Image img : images) {
+            var existingImage = existingRoom.getImages().stream()
+                    .filter(image -> image.getImage().getPath().equals(img.getPath()))
+                    .findFirst()
+                    .orElseThrow(
+                            () -> new ImageNotFoundException("Image with path " + img.getPath() + " was not found")
+                    );
+            existingRoom.removeImage(existingImage);
+        }
+        roomRepository.save(existingRoom);
     }
 
     public RoomDTO getRoomById(int hotelId, int roomNr) {

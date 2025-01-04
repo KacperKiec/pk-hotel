@@ -2,6 +2,7 @@ package edu.zespol5.pkhotelbackend.controller;
 
 import edu.zespol5.pkhotelbackend.model.Convenience;
 import edu.zespol5.pkhotelbackend.model.Extra;
+import edu.zespol5.pkhotelbackend.model.Image;
 import edu.zespol5.pkhotelbackend.model.room_convenience.RoomConvenienceRequestDTO;
 import edu.zespol5.pkhotelbackend.model.hotel.Hotel;
 import edu.zespol5.pkhotelbackend.model.hotel.HotelDTO;
@@ -22,6 +23,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping(value = "/admin")
 public class AdminController {
@@ -31,14 +34,16 @@ public class AdminController {
     private final ExtraService extraService;
     private final UserService userService;
     private final ReservationService reservationService;
+    private final ImageService imageService;
 
-    public AdminController(RoomService roomService, HotelService hotelService, ConvenienceService convenienceService, ExtraService extraService, UserService userService, ReservationService reservationService) {
+    public AdminController(RoomService roomService, HotelService hotelService, ConvenienceService convenienceService, ExtraService extraService, UserService userService, ReservationService reservationService, ImageService imageService) {
         this.roomService = roomService;
         this.hotelService = hotelService;
         this.convenienceService = convenienceService;
         this.extraService = extraService;
         this.userService = userService;
         this.reservationService = reservationService;
+        this.imageService = imageService;
     }
 
     @PostMapping(value = "/hotel")
@@ -85,7 +90,7 @@ public class AdminController {
 
     @DeleteMapping(value = "/room-conveniences")
     public ResponseEntity<?> removeRoomConveniences(@RequestBody RoomConvenienceRequestDTO param) {
-        roomService.removeConvenience(param.getRoom(), param.getConveniencesIds().getFirst());
+        roomService.removeConvenience(param.getRoom(), param.getConveniencesIds());
         return ResponseEntity.noContent().build();
     }
 
@@ -97,7 +102,7 @@ public class AdminController {
 
     @DeleteMapping(value = "/room-image")
     public ResponseEntity<?> removeRoomImages(@RequestBody RoomImageRequestDTO param) {
-        roomService.removeImage(param.getRoom(), param.getImages().getFirst().getId());
+        roomService.removeImage(param.getRoom(), param.getImages());
         return ResponseEntity.noContent().build();
     }
 
@@ -196,5 +201,17 @@ public class AdminController {
     public ResponseEntity<ReservationDTO> updateReservation(@RequestBody Reservation reservation) {
         var result = reservationService.updateReservation(reservation);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(value = "/image")
+    public ResponseEntity<List<Image>> getAllImages() {
+        var result = imageService.findAll();
+        return ResponseEntity.ok(result);
+    }
+
+    @DeleteMapping(value = "/image")
+    public ResponseEntity<?> deleteImage(@RequestBody Image image) {
+        imageService.deleteImage(image.getId());
+        return ResponseEntity.noContent().build();
     }
 }

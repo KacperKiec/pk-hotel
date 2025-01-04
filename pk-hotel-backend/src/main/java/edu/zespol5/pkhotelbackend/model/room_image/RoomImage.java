@@ -36,11 +36,11 @@ public class RoomImage {
         setRoom(room);
         setImage(image);
         RoomId roomId = new RoomId();
-        roomId.setHotel(roomId.getHotel());
+        roomId.setHotel(room.getHotel().getId());
         roomId.setRoomNr(room.getRoomNr());
         RoomImageId id = new RoomImageId();
         id.setRoomId(roomId);
-        id.setImageId(id.getImageId());
+        id.setImageId(image.getId());
         setId(id);
     }
 }

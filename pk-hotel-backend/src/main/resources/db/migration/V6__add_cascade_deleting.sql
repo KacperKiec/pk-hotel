@@ -22,3 +22,19 @@ ALTER TABLE room_convenience
         FOREIGN KEY (hotel_id, room_nr)
             REFERENCES room(hotel_id, room_nr)
             ON DELETE CASCADE;
+
+ALTER TABLE room_image
+DROP FOREIGN KEY room_image_ibfk_2;
+ALTER TABLE room_image
+    ADD CONSTRAINT room_image_ibfk_2
+        FOREIGN KEY (image_id)
+            REFERENCES image(id)
+            ON DELETE CASCADE;
+
+ALTER TABLE room_image
+DROP FOREIGN KEY room_image_ibfk_1;
+ALTER TABLE room_image
+    ADD CONSTRAINT room_image_ibfk_1
+        FOREIGN KEY (hotel_id, room_nr)
+            REFERENCES room(hotel_id, room_nr)
+            ON DELETE CASCADE;
