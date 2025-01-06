@@ -66,8 +66,7 @@ CREATE TABLE reservation (
 
 CREATE TABLE extra (
    id int(8) PRIMARY KEY AUTO_INCREMENT,
-   name VARCHAR(70) NOT NULL,
-   daily_price DECIMAL(10, 2) NOT NULL
+   name VARCHAR(70) NOT NULL
 );
 
 CREATE TABLE reservation_extra (

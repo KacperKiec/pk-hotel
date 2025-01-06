@@ -1,0 +1,31 @@
+.extras-table {
+  display: block;
+  overflow-x: hidden;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.extras-table > *:not(:first-child) {
+  cursor: pointer;
+}
+
+.labels-container {
+  margin-top: 20px;
+}
+
+.add-extra {
+  margin-left: 20px;
+}
+
+.price-label {
+  margin-left: 220px;
+}
+
+.price-input {
+  margin-left: 10px;
+}
+
+.add-btn {
+  height: 40px;
+  margin-left: 40px;
+}

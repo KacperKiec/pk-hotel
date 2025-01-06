@@ -12,45 +12,36 @@ const Filters = () => {
   return (
     <div className='filters-container'>
       <span>
-        <strong>Filter by:</strong>
+        <strong>Standard:</strong>
       </span>
       <hr />
       <div className="input-group vertical">
         <div className="row">
           <input 
             type="checkbox" 
-            name="isApartament"
+            name="low"
             checked={selected === 1}
             onChange={() => handleChange(1)}
             />
-          <label htmlFor="isApartament">Apartament</label>
+          <label htmlFor="low">Low</label>
         </div>
         <div className="row">
           <input 
             type="checkbox" 
-            name="isHotel"
+            name="average"
             checked={selected === 2}
             onChange={() => handleChange(2)}
             />
-          <label htmlFor="isHotel">Hotel</label>
+          <label htmlFor="average">Avereage</label>
         </div>
         <div className="row">
           <input 
             type="checkbox" 
-            name="isHostel"
+            name="high"
             checked={selected === 3}
             onChange={() => handleChange(3)}
             />
-          <label htmlFor="isHostel">Hostel</label>
-        </div>
-        <div className="row">
-          <input 
-            type="checkbox" 
-            name="isHomeStay"
-            checked={selected === 4}
-            onChange={() => handleChange(4)}
-            />
-          <label htmlFor="isHomestay">Homestay</label>
+          <label htmlFor="high">High</label>
         </div>
       </div>
     </div>

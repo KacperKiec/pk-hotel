@@ -1,5 +1,5 @@
-import React, { Dispatch, SetStateAction, useState } from 'react'
-import NavBar from '../common/NavBar'
+import { Dispatch, SetStateAction, useState } from 'react'
+import NavBar from './NavBar'
 import { User } from '../../Users/User';
 import UserDetails from '../common/UserDetails';
 import { ReservationHistory } from '../common/ReservationHistory';

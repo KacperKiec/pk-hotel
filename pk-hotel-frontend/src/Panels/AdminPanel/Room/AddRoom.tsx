@@ -294,7 +294,7 @@ const AddRoom = () => {
 
   return (
     <div className="admin-panel-container">
-      <h1 className="admin-panel-h1">Add Room</h1>
+      <h1 className="admin-panel-h1">Add/Update Room</h1>
       <form className="admin-panel-form" onSubmit={handleSubmit}>
         <InputWithLabel
           fieldName="hotelId"
