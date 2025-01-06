@@ -589,3 +589,117 @@ export const removeRoomApi = async (hotelId: number, roomNr:number): Promise<{ s
       };
    }
 }
+
+interface AddExtraProps {
+   name: string,
+   pricePerDay: number
+}
+
+export const addExtraApi = async ({name, pricePerDay}: AddExtraProps): Promise<{ status: number; message?: string;}> => {
+   try {
+      const response = await fetch(`${baseUrl}/admin/extra`, {
+         method: 'POST',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({
+            name,
+            pricePerDay
+         }),
+         credentials: 'include',
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: response.status,
+            message: errorData.message || "Failed to add extra.",
+         };
+      }
+
+      return {
+         status: response.status,
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while adding extra.",
+      };
+   }
+}
+
+export const getAllExtrasApi = async (): Promise<{ status: number; message?: string; data?: any[] }> => {
+   let allExtras: any[] = [];
+   let currentPage = 0;
+
+   try {
+      while (true) {
+         const response = await fetch(`${baseUrl}/admin/extra?page=${currentPage}`, {
+            method: 'GET',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+         });
+
+         if (!response.ok) {
+            const errorData = await response.json();
+            return {
+               status: response.status,
+               message: errorData.message || "Failed to fetch extras.",
+            };
+         }
+
+         const responseData = await response.json();
+
+         const items = responseData.content || [];
+         allExtras = [...allExtras, ...items];
+
+         if (responseData.totalPages && currentPage >= responseData.totalPages) {
+            break;
+         }
+
+         currentPage++;
+      }
+
+      return {
+         status: 200,
+         data: allExtras,
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while fetching extras.",
+      };
+   }
+};
+
+
+export const deleteExtraApi = async (id:number): Promise<{ status: number; message?: string; data?: any }> => {
+   try{
+      const response = await fetch(`${baseUrl}/admin/extra`, {
+         method: 'DELETE',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({id}),
+         credentials: 'include',
+      });
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: response.status,
+            message: errorData.message || "Failed to remove an extra.",
+         };
+      }
+
+      return {
+         status: response.status,
+      };
+   } catch(error: any){
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while removing the extra.",
+      };
+   }
+}
