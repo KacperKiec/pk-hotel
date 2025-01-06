@@ -1,15 +1,15 @@
 import "../AdminPanel.css";
-import { Convenience } from "./AddRoom";
+import { Extra } from "./Extra";
 
-interface ConveniencesProps {
-  conveniences: Convenience[];
+interface ExtrasProps {
+  extras: Extra[];
   onClick: (e: any, name: string) => void;
 }
 
-export const Conveniences = ({ conveniences, onClick }: ConveniencesProps) => {
+const Extras = ({ extras, onClick }: ExtrasProps) => {
   return (
     <div className="conveniences-container">
-      {conveniences.map(
+      {extras.map(
         (element, index) =>
           element.name !== "" && (
             <span
@@ -25,4 +25,4 @@ export const Conveniences = ({ conveniences, onClick }: ConveniencesProps) => {
   );
 };
 
-export default Conveniences;
+export default Extras;

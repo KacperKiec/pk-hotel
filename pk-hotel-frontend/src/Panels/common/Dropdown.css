@@ -1,0 +1,120 @@
+.navbar {
+  margin: 0;
+  background-color: #275DAD;
+  border: 1px solid grey;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 8px 8px 0 0;
+}
+
+.navbar-default .navbar-nav {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navbar-default .navbar-nav > li {
+  margin: 0 10px;
+}
+
+.navbar-default .navbar-nav > li > button {
+  color: #fff;
+  padding: 10px 20px;
+  outline: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.navbar-default .navbar-nav > li > button:hover {
+  color: #121212;
+  background-color: #fff;
+}
+
+.navbar-default .navbar-nav > .active > button {
+  color: #fff;
+  background-color: #1c427a;
+  border-radius: 4px;
+}
+
+.content {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.navbar {
+  display: flex;
+  flex-flow: row nowrap;
+  position: relative;
+  justify-content: center;
+  background-color: #275DAD;
+}
+
+.dropdown {
+  display: inline-block;
+}
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown-btn{
+  display: block;
+  background-color: #275DAD;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  margin: 0 10px;
+}
+
+.dropdown:hover .dropbtn {background-color: #406daf;}
+
+.dropdown-btn:hover{
+  background-color: #1c427a;
+}
+
+button:focus,
+button:active {
+    background-color: #275DAD; 
+    outline: none; 
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  padding: 0;
+  margin: 0;
+  border-radius: 10px;
+}
+
+.dropdown-list{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dropdown-list li {
+  margin: 0;
+  padding: 0;
+}
+
+.dropdown-list li button {
+  width: 100%;
+  margin: 0;
+}
+
+.dropdown-list li button:hover{
+  background-color: darkgrey;
+}
+
+.dropdown-list li button:active,
+.dropdown-list li button:focus{
+  background-color: lightgray;
+}
