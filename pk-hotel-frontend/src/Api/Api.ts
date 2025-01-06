@@ -630,7 +630,7 @@ export const addExtraApi = async ({name, pricePerDay}: AddExtraProps): Promise<{
 
 export const getAllExtrasApi = async (): Promise<{ status: number; message?: string; data?: any[] }> => {
    let allExtras: any[] = [];
-   let currentPage = 0;
+   let currentPage = 1;
 
    try {
       while (true) {
@@ -703,3 +703,91 @@ export const deleteExtraApi = async (id:number): Promise<{ status: number; messa
       };
    }
 }
+
+export const getHotelsFromCity = async (city: string): Promise<{ status: number; message?: string; data?: any }> => {
+   let allHotels: HotelDTO[] = [];
+   let currentPage = 1;
+
+   try {
+      while (true) {
+         const response = await fetch(`${baseUrl}/hotels/search?page=${currentPage}&cities=${city}`, {
+            method: 'GET',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+         });
+
+         if (!response.ok) {
+            const errorData = await response.json();
+            return {
+               status: response.status,
+               message: errorData.message || "Failed to fetch hotels.",
+            };
+         }
+
+         const responseData = await response.json();
+
+         const items = responseData.content || [];
+         allHotels = [...allHotels, ...items];
+
+         if (responseData.totalPages && currentPage >= responseData.totalPages) {
+            break;
+         }
+
+         currentPage++;
+      }
+
+      return {
+         status: 200,
+         data: allHotels,
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while fetching hotels.",
+      };
+   }
+}
+
+interface getRoomsWithFiltersProps{
+   hotelId: number;
+   standard: string;
+   startDate: string;
+   endDate: string;
+   places: number;
+   page: number;
+   city: string;
+}
+
+export const getRoomsWithFilters = async ({hotelId, standard, startDate, endDate, places, page, city}: getRoomsWithFiltersProps) =>{
+   try {
+      const response = await fetch(`${baseUrl}/rooms/search?page=${page}&cities=${city}&standard=${standard}&startDate=${startDate}&endDate=${endDate}&places=${places}&hotelId=${hotelId}`, {
+         method: 'GET',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         credentials: 'include',
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: response.status,
+            message: errorData.message || "Failed to fetch hotels.",
+         };
+      }
+
+      const responseData = await response.json();
+
+      return {
+         status: 200,
+         data: responseData.content,
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while fetching hotels.",
+      };
+   }
+} 

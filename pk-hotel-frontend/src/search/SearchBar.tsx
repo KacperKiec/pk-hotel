@@ -2,23 +2,32 @@ import React, { useState, useEffect, useRef } from "react";
 import "./SearchBar.css";
 import DatePicker from "./DatePicker";
 import { PeoplePicker } from "./PeoplePicker";
+import { getHotelsFromCity } from "../Api/Api";
 import dayjs from "dayjs";
+import { HotelDTO } from "../Hotel/Hotel";
 
-export const SearchBar = () => {
+interface SearchBarProps {
+  standard: number;
+}
+
+export const SearchBar = ({ standard }: SearchBarProps) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isPeopleCountVisible, setPeopleCountVisibility] = useState(false);
-  
+  const [error, setError] = useState("");
+
+  const [city, setCity] = useState("Miami");
   const [adults, setAdults] = useState(0);
   const [children, setChildren] = useState(0);
 
-  const [arrivalDate, setArrivalDate] = useState(dayjs().format('YYYY-MM-DD'));
-  const [departureDate, setDepatureDate] = useState(dayjs().format('YYYY-MM-DD'));
+  const [arrivalDate, setArrivalDate] = useState(dayjs().format("YYYY-MM-DD"));
+  const [departureDate, setDepartureDate] = useState(
+    dayjs().format("YYYY-MM-DD")
+  );
 
   const dateButtonRef = useRef<HTMLButtonElement>(null);
   const peopleButtonRef = useRef<HTMLButtonElement>(null);
   const datePickerRef = useRef<HTMLDivElement>(null);
   const peoplePickerRef = useRef<HTMLDivElement>(null);
-  
 
   const handleDateClick = (e: any) => {
     e.preventDefault();
@@ -61,25 +70,44 @@ export const SearchBar = () => {
   }, []);
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value} = e.target;
-    
-    if(name === 'arrivalDate') setArrivalDate(value);
-    if(name === 'departureDate') setDepatureDate(value);
-    if(name === 'adults') setAdults(Number(value));
-    if(name === 'children') setChildren(Number(value));
-    console.log(value);
-  }
+    const { name, value } = e.target;
+
+    if (name === "arrivalDate") setArrivalDate(value);
+    if (name === "departureDate") setDepartureDate(value);
+    if (name === "adults") setAdults(Number(value));
+    if (name === "children") setChildren(Number(value));
+    if (name === "city") setCity(value);
+  };
+
+  const handleSumbit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const response = await getHotelsFromCity(city);
+    if (response.message) {
+      setError(response.message);
+      return;
+    }
+
+    const hotelIds: number[] = [];
+
+    response.data.forEach((element: any) => {
+      hotelIds.push(element.id);
+    });
+-
+  };
 
   return (
     <div className="form-container">
-      <form action="input-group horizontal">
+      <form className="input-group horizontal" onSubmit={handleSumbit}>
         <div className="container">
           <div className="row">
             <input
               type="text"
               id="place"
+              name="city"
               placeholder="Where are you going?"
               className="col-sm-6 place"
+              onChange={onInputChange}
+              value={city}
             />
             <div className="button-group horizontal col-sm">
               <button onClick={handleDateClick} ref={dateButtonRef}>
@@ -89,16 +117,16 @@ export const SearchBar = () => {
                 <span className="icon-user icons"></span>
               </button>
             </div>
-            <button className="search-button">
+            <button className="search-button" type="submit">
               <span className="icon-search inverse icons"></span>
             </button>
           </div>
         </div>
         {isDatePickerVisible && (
           <div className="date" ref={datePickerRef}>
-            <DatePicker 
-              arrivalDate={arrivalDate} 
-              departureDate={departureDate} 
+            <DatePicker
+              arrivalDate={arrivalDate}
+              departureDate={departureDate}
               onChange={onInputChange}
             />
           </div>

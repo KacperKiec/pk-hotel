@@ -44,12 +44,10 @@ form {
 }
 
 .search-button {
-  background-color: #275DAD;
+  background-color: #275dad;
   transition: backgroud-color 0.3s ease;
 }
 
 .search-button:hover {
   background-color: rgb(46, 85, 129);
 }
-
-

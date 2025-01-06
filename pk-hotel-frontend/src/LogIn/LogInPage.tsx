@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import "./style.css";
 import "boxicons/css/boxicons.min.css";
-import InputField from "../common/InputField";
+import InputField from "../search/InputField";
 import { Link, useNavigate } from "react-router-dom";
 import { loginApi } from "../Api/Api";
 import { User, transformUserDTOToUser } from "../Users/User";
