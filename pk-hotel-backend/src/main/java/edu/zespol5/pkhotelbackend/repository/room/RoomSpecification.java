@@ -10,6 +10,7 @@ import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class RoomSpecification {
 
@@ -28,6 +29,24 @@ public class RoomSpecification {
                 return builder.conjunction();
             }
             return builder.equal(root.get("roomNr"), roomNr);
+        };
+    }
+
+    public static Specification<Room> hasCity(List<String> cities) {
+        return (root, query, builder) -> {
+            if(cities == null || cities.isEmpty()) {
+                return builder.conjunction();
+            }
+            return root.get("hotel").get("city").in(cities);
+        };
+    }
+
+    public static Specification<Room> hasCountry(List<String> counties) {
+        return (root, query, builder) -> {
+            if(counties == null || counties.isEmpty()) {
+                return builder.conjunction();
+            }
+            return root.get("hotel").get("country").in(counties);
         };
     }
 

@@ -156,11 +156,15 @@ public class RoomService {
             Integer places,
             LocalDate startDate,
             LocalDate endDate,
+            List<String> cities,
+            List<String> countries,
             Pageable pageable) {
 
-        hotelRepository.findHotelById(hotelId).orElseThrow(
-                () -> new HotelNotFoundException("Hotel with id " + hotelId + " was not found")
-        );
+        if(hotelId != null) {
+            hotelRepository.findHotelById(hotelId).orElseThrow(
+                    () -> new HotelNotFoundException("Hotel with id " + hotelId + " was not found")
+            );
+        }
 
         Specification<Room> spec = Specification.where(RoomSpecification.hasHotelId(hotelId))
                 .and(RoomSpecification.hasRoomNr(roomNr))
@@ -168,6 +172,8 @@ public class RoomService {
                 .and(RoomSpecification.hasPriceLessOrEqualThan(upperPriceLimit))
                 .and(RoomSpecification.hasPriceGreaterOrEqualThan(lowerPriceLimit))
                 .and(RoomSpecification.hasStandard(standard))
+                .and(RoomSpecification.hasCity(cities))
+                .and(RoomSpecification.hasCountry(countries))
                 .and(RoomSpecification.isAvailable(startDate, endDate));
         return roomRepository.findAll(spec, pageable).map(this::toDTO);
     }

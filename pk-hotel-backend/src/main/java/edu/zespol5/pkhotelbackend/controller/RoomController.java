@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/rooms")
@@ -39,13 +40,15 @@ public class RoomController {
             @RequestParam(required = false) Double upperPriceLimit,
             @RequestParam(required = false) RoomStandard standard,
             @RequestParam(required = false) Integer places,
+            @RequestParam(required = false) List<String> cities,
+            @RequestParam(required = false) List<String> countries,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
             @RequestParam(defaultValue = "0") int page) {
 
         Pageable pageable = PageRequest.of(page, 10);
         var result = roomService.getRoomsBy(
-                hotelId, roomNr, lowerPriceLimit, upperPriceLimit, standard, places, startDate, endDate, pageable);
+                hotelId, roomNr, lowerPriceLimit, upperPriceLimit, standard, places, startDate, endDate, cities, countries, pageable);
         return ResponseEntity.ok(result);
     }
 
