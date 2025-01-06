@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { MOCK_ROOMS } from "../Rooms/MockRooms";
 import { Room } from "../Rooms/Room";
 import RoomList from "../Rooms/RoomList";
 import Filters from "../search/Filters";
@@ -7,12 +6,13 @@ import { SortBy } from "../search/SortBy";
 import { SearchBar } from "../search/SearchBar";
 
 export const MainPage = () => {
-  const [rooms, setRooms] = useState<Room[]>(MOCK_ROOMS);
+  const [rooms, setRooms] = useState<Room[]>([]); // Initialize with an empty array
+
   const [selectedStandard, setSelectedStandard] = useState<number>(1);
 
   return (
     <div>
-      <SearchBar standard={selectedStandard} />
+      <SearchBar standard={selectedStandard} setRooms={setRooms} />
       <div className="container">
         <div
           className="container-filters-rooms"

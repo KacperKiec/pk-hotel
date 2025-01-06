@@ -2,21 +2,23 @@ import React, { useState, useEffect, useRef } from "react";
 import "./SearchBar.css";
 import DatePicker from "./DatePicker";
 import { PeoplePicker } from "./PeoplePicker";
-import { getHotelsFromCity } from "../Api/Api";
+import { getHotelsFromCity, getRoomsWithFilters } from "../Api/Api";
 import dayjs from "dayjs";
 import { HotelDTO } from "../Hotel/Hotel";
+import { Room } from "../Rooms/Room";
 
 interface SearchBarProps {
   standard: number;
+  setRooms: React.Dispatch<React.SetStateAction<Room[]>>;
 }
 
-export const SearchBar = ({ standard }: SearchBarProps) => {
+export const SearchBar = ({ standard, setRooms }: SearchBarProps) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isPeopleCountVisible, setPeopleCountVisibility] = useState(false);
   const [error, setError] = useState("");
 
   const [city, setCity] = useState("Miami");
-  const [adults, setAdults] = useState(0);
+  const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
 
   const [arrivalDate, setArrivalDate] = useState(dayjs().format("YYYY-MM-DD"));
@@ -28,6 +30,47 @@ export const SearchBar = ({ standard }: SearchBarProps) => {
   const peopleButtonRef = useRef<HTMLButtonElement>(null);
   const datePickerRef = useRef<HTMLDivElement>(null);
   const peoplePickerRef = useRef<HTMLDivElement>(null);
+
+  type image = {
+    id: number;
+    path: string;
+  };
+
+  const getImagesUrl = (images: image[]) => {
+    const imagesUrl: string[] = [];
+    images.forEach((element) => {
+      imagesUrl.push(element.path);
+    });
+    return imagesUrl;
+  };
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      const response = await getRoomsWithFilters({ page: 0 });
+      if (response.data) {
+        setRooms([]);
+        response.data.forEach((element) => {
+          setRooms((prev) => [
+            ...prev,
+            new Room({
+              hotelId: element.hotelId,
+              roomNr: element.roomNr,
+              standard: element.standard,
+              places: element.places,
+              description: element.description,
+              price: element.price,
+              imagesUrl: getImagesUrl(element.images),
+              reviews: element.reviews,
+              conveniences: element.conveniences,
+              name: element.name,
+            }),
+          ]);
+        });
+      }
+    };
+
+    fetchRooms();
+  }, []); // Empty dependency array ensures this runs only once when the component mounts
 
   const handleDateClick = (e: any) => {
     e.preventDefault();
@@ -81,18 +124,61 @@ export const SearchBar = ({ standard }: SearchBarProps) => {
 
   const handleSumbit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const response = await getHotelsFromCity(city);
-    if (response.message) {
-      setError(response.message);
-      return;
+
+    let standardString = "";
+    switch (standard) {
+      case 1:
+        standardString = "LOW";
+        break;
+      case 2:
+        standardString = "AVERAGE";
+        break;
+      case 3:
+        standardString = "HIGH";
+        break;
+      default:
+        standardString = "LOW";
+        break;
     }
-
-    const hotelIds: number[] = [];
-
-    response.data.forEach((element: any) => {
-      hotelIds.push(element.id);
+    const response = await getRoomsWithFilters({
+      standard: standardString,
+      startDate: arrivalDate,
+      endDate: departureDate,
+      places: adults + children,
+      city,
+      page: 0,
     });
--
+
+    console.log({
+      standard: standardString,
+      startDate: arrivalDate,
+      endDate: departureDate,
+      places: adults + children,
+      city,
+      page: 0,
+    });
+
+    if (!response.data) return;
+
+    setRooms([]);
+
+    response.data.forEach((element) => {
+      setRooms((prev) => [
+        ...prev,
+        new Room({
+          hotelId: element.hotelId,
+          roomNr: element.roomNr,
+          standard: element.standard,
+          places: element.places,
+          description: element.description,
+          price: element.price,
+          imagesUrl: getImagesUrl(element.images),
+          reviews: element.reviews,
+          conveniences: element.conveniences,
+          name: element.name,
+        }),
+      ]);
+    });
   };
 
   return (

@@ -1,6 +1,5 @@
 import { HotelDTO } from '../Hotel/Hotel'
 import { Convenience, Images } from '../Panels/AdminPanel/Room/AddRoom'
-import Conveniences from '../Panels/AdminPanel/Room/Conveniences'
 import { RoomDTO } from '../Rooms/Room'
 import { User, UserDTO, transformUser} from '../Users/User'
 const baseUrl = 'http://localhost:8080'
@@ -751,18 +750,30 @@ export const getHotelsFromCity = async (city: string): Promise<{ status: number;
 }
 
 interface getRoomsWithFiltersProps{
-   hotelId: number;
-   standard: string;
-   startDate: string;
-   endDate: string;
-   places: number;
+   standard?: string;
+   startDate?: string;
+   endDate?: string;
+   places?: number;
    page: number;
-   city: string;
+   city?: string;
 }
 
-export const getRoomsWithFilters = async ({hotelId, standard, startDate, endDate, places, page, city}: getRoomsWithFiltersProps) =>{
-   try {
-      const response = await fetch(`${baseUrl}/rooms/search?page=${page}&cities=${city}&standard=${standard}&startDate=${startDate}&endDate=${endDate}&places=${places}&hotelId=${hotelId}`, {
+export const getRoomsWithFilters = async ({ standard, startDate, endDate, places, page, city}: getRoomsWithFiltersProps): Promise<{status: number, message?: string, data?: any[]}> =>{
+   const params = new URLSearchParams(
+      Object.entries({
+        city,
+        standard,
+        startDate,
+        endDate,
+        places: places ? places.toString() : undefined, // Convert number to string
+        page: page.toString(), // Ensure page is always included
+      })
+        .filter(([_, value]) => value !== undefined) // Filter out undefined
+        .map(([key, value]) => [key, value as string]) // Cast to string to satisfy types
+    );
+  
+    try {
+      const response = await fetch(`${baseUrl}/rooms/search?${params.toString()}`,{
          method: 'GET',
          headers: {
             'Content-Type': 'application/json',
@@ -774,7 +785,7 @@ export const getRoomsWithFilters = async ({hotelId, standard, startDate, endDate
          const errorData = await response.json();
          return {
             status: response.status,
-            message: errorData.message || "Failed to fetch hotels.",
+            message: errorData.message || "Failed to fetch rooms.",
          };
       }
 
@@ -787,7 +798,7 @@ export const getRoomsWithFilters = async ({hotelId, standard, startDate, endDate
    } catch (error: any) {
       return {
          status: -1,
-         message: error.message || "An unexpected error occurred while fetching hotels.",
+         message: error.message || "An unexpected error occurred while fetching rooms.",
       };
    }
 } 
