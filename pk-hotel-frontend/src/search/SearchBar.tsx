@@ -10,9 +10,14 @@ import { Room } from "../Rooms/Room";
 interface SearchBarProps {
   standard: number;
   setRooms: React.Dispatch<React.SetStateAction<Room[]>>;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const SearchBar = ({ standard, setRooms }: SearchBarProps) => {
+export const SearchBar = ({
+  standard,
+  setRooms,
+  setLoading,
+}: SearchBarProps) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isPeopleCountVisible, setPeopleCountVisibility] = useState(false);
   const [error, setError] = useState("");
@@ -140,6 +145,9 @@ export const SearchBar = ({ standard, setRooms }: SearchBarProps) => {
         standardString = "LOW";
         break;
     }
+
+    setLoading(true);
+
     const response = await getRoomsWithFilters({
       standard: standardString,
       startDate: arrivalDate,
@@ -149,14 +157,9 @@ export const SearchBar = ({ standard, setRooms }: SearchBarProps) => {
       page: 0,
     });
 
-    console.log({
-      standard: standardString,
-      startDate: arrivalDate,
-      endDate: departureDate,
-      places: adults + children,
-      city,
-      page: 0,
-    });
+    setTimeout(() => {
+      setLoading(false);
+    }, 600);
 
     if (!response.data) return;
 

@@ -4,15 +4,21 @@ import RoomList from "../Rooms/RoomList";
 import Filters from "../search/Filters";
 import { SortBy } from "../search/SortBy";
 import { SearchBar } from "../search/SearchBar";
+import "./MainPage.css";
 
 export const MainPage = () => {
   const [rooms, setRooms] = useState<Room[]>([]); // Initialize with an empty array
 
   const [selectedStandard, setSelectedStandard] = useState<number>(1);
+  const [loading, setLoading] = useState(false);
 
   return (
     <div>
-      <SearchBar standard={selectedStandard} setRooms={setRooms} />
+      <SearchBar
+        standard={selectedStandard}
+        setRooms={setRooms}
+        setLoading={setLoading}
+      />
       <div className="container">
         <div
           className="container-filters-rooms"
@@ -34,8 +40,14 @@ export const MainPage = () => {
                 setSelected={setSelectedStandard}
               />
             </div>
-            <div className="col-sm">
-              <RoomList rooms={rooms} />
+            <div className="col-sm loading-container">
+              {loading && (
+                <div className="center">
+                  <span className="spinner primary"></span>
+                  <p>Loading...</p>
+                </div>
+              )}
+              {!loading && <RoomList rooms={rooms} />}
             </div>
           </div>
         </div>
