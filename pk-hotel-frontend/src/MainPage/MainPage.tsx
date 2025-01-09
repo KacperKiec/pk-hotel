@@ -9,7 +9,7 @@ import "./MainPage.css";
 export const MainPage = () => {
   const [rooms, setRooms] = useState<Room[]>([]); // Initialize with an empty array
 
-  const [selectedStandard, setSelectedStandard] = useState<number>(1);
+  const [selectedStandard, setSelectedStandard] = useState<number>(4);
   const [loading, setLoading] = useState(false);
 
   return (
@@ -40,10 +40,10 @@ export const MainPage = () => {
                 setSelected={setSelectedStandard}
               />
             </div>
-            <div className="col-sm loading-container">
+            <div className="col-sm">
               {loading && (
-                <div className="center">
-                  <span className="spinner primary"></span>
+                <div className="center loading">
+                  <span className="spinner primary loading-circle"></span>
                   <p>Loading...</p>
                 </div>
               )}

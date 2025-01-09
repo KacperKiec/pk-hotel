@@ -761,7 +761,7 @@ interface getRoomsWithFiltersProps{
 export const getRoomsWithFilters = async ({ standard, startDate, endDate, places, page, city}: getRoomsWithFiltersProps): Promise<{status: number, message?: string, data?: any[]}> =>{
    const params = new URLSearchParams(
       Object.entries({
-        city,
+        cities: city,
         standard,
         startDate,
         endDate,

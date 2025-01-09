@@ -46,6 +46,15 @@ const Filters = ({selected, setSelected}: FiltersProps) => {
           />
           <label htmlFor="high">High</label>
         </div>
+        <div className="row">
+          <input
+            type="checkbox"
+            name="high"
+            checked={selected === 4}
+            onChange={() => handleChange(4)}
+          />
+          <label htmlFor="high">Any</label>
+        </div>
       </div>
     </div>
   );

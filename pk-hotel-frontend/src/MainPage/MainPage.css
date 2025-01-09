@@ -1,9 +1,10 @@
-.loading-container {
+.loading {
+  margin-top: 30vh;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.center {
-  margin-left: 50px;
+.loading-circle {
+  margin-left: 20px;
 }

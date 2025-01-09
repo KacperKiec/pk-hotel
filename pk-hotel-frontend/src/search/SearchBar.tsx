@@ -22,7 +22,7 @@ export const SearchBar = ({
   const [isPeopleCountVisible, setPeopleCountVisibility] = useState(false);
   const [error, setError] = useState("");
 
-  const [city, setCity] = useState("Miami");
+  const [city, setCity] = useState("");
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
 
@@ -141,8 +141,11 @@ export const SearchBar = ({
       case 3:
         standardString = "HIGH";
         break;
+      case 4:
+        standardString = "";
+        break;
       default:
-        standardString = "LOW";
+        standardString = "ANY";
         break;
     }
 
