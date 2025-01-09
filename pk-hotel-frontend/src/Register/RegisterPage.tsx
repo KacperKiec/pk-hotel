@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./style.css";
 import "boxicons/css/boxicons.min.css";
-import InputField from "../common/InputField";
+import InputField from "../search/InputField";
 import { Link, useNavigate } from "react-router-dom";
 import { registerAPI } from "../Api/Api";
 import { User, Role } from "../Users/User";

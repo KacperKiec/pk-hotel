@@ -13,27 +13,26 @@ import {
   removeConvenienceApi,
   removeRoomConveniencesApi,
 } from "../../../Api/Api";
-import path from "path";
 
 export interface Images {
-  id: number | undefined,
-  path: string
+  id: number | undefined;
+  path: string;
 }
 
-export interface Convenience{
-  id: number | undefined,
-  name: string,
+export interface Convenience {
+  id: number | undefined;
+  name: string;
 }
 
 interface RoomData {
-  hotelId: string,
-  roomNr: string,
-  standard: string,
-  places: string,
-  description: string,
-  price: string,
-  images: Images[],
-  conveniences: Convenience[],
+  hotelId: string;
+  roomNr: string;
+  standard: string;
+  places: string;
+  description: string;
+  price: string;
+  images: Images[];
+  conveniences: Convenience[];
 }
 
 const AddRoom = () => {
@@ -48,7 +47,10 @@ const AddRoom = () => {
     conveniences: [],
   });
 
-  const [currentConvenience, setCurrentConvenience] = useState<Convenience>({id: undefined, name: ""});
+  const [currentConvenience, setCurrentConvenience] = useState<Convenience>({
+    id: undefined,
+    name: "",
+  });
 
   const [error, setError] = useState("");
   const [findRoomError, setFindRoomError] = useState("");
@@ -80,7 +82,10 @@ const AddRoom = () => {
       }
     }
 
-    const images = filePaths.map((element) => ({id: undefined, path: element}));
+    const images = filePaths.map((element) => ({
+      id: undefined,
+      path: element,
+    }));
 
     if (isValid) {
       setRoomData((prev) => ({
@@ -91,9 +96,9 @@ const AddRoom = () => {
   };
 
   const handleConveniencesChange = (value: string) => {
-    setCurrentConvenience(prev => ({
+    setCurrentConvenience((prev) => ({
       ...prev,
-      name: value
+      name: value,
     }));
   };
 
@@ -103,7 +108,7 @@ const AddRoom = () => {
       ...prev,
       conveniences: [...prev.conveniences, currentConvenience],
     }));
-    setCurrentConvenience({id: undefined, name: ""});
+    setCurrentConvenience({ id: undefined, name: "" });
   };
 
   const handleFindRoom = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -128,7 +133,7 @@ const AddRoom = () => {
 
     const foundRoomLocal = response.data; // Local variable scoped to this block
     if (!foundRoomLocal) return;
-    
+
     setRoomData((prev) => ({
       ...prev,
       standard: foundRoomLocal.standard,
@@ -138,7 +143,7 @@ const AddRoom = () => {
       images: foundRoomLocal.images,
       conveniences: foundRoomLocal.conveniences,
     }));
-    return 
+    return;
   };
 
   const handleDeleteConvenience = (
@@ -147,7 +152,9 @@ const AddRoom = () => {
   ) => {
     setRoomData((prev) => ({
       ...prev,
-      conveniences: prev.conveniences.filter((element) => element.name !== name),
+      conveniences: prev.conveniences.filter(
+        (element) => element.name !== name
+      ),
     }));
   };
 
@@ -176,27 +183,32 @@ const AddRoom = () => {
     }
   };
 
-  const deleteConveniencesFromDb = () =>{
-    if(!foundRoom) return;
+  const deleteConveniencesFromDb = () => {
+    if (!foundRoom) return;
     console.log(foundRoom);
     const conveniecesIds: number[] = [];
-    foundRoom.conveniences.forEach(element => {
-      if(!roomData.conveniences.includes(element)){
-        if(element.id){
+    foundRoom.conveniences.forEach((element) => {
+      if (!roomData.conveniences.includes(element)) {
+        if (element.id) {
           removeConvenienceApi(element.id);
           conveniecesIds.push(element.id);
         }
       }
     });
 
-    if(conveniecesIds.length > 0) removeRoomConveniencesApi(Number(roomData.roomNr), Number(roomData.hotelId), conveniecesIds);
-  }
+    if (conveniecesIds.length > 0)
+      removeRoomConveniencesApi(
+        Number(roomData.roomNr),
+        Number(roomData.hotelId),
+        conveniecesIds
+      );
+  };
 
   const addConveniencesToDb = async (room: Room) => {
     const addedConveniences: Convenience[] = [];
     // Add conveniences and assign to room
     for (const convenience of roomData.conveniences) {
-      if(foundRoom && foundRoom.conveniences.includes(convenience)) continue;
+      if (foundRoom && foundRoom.conveniences.includes(convenience)) continue;
 
       console.log(convenience.name);
 
@@ -213,9 +225,10 @@ const AddRoom = () => {
         return;
       }
 
-      if(convenienceResponse.convenience) addedConveniences.push(convenienceResponse.convenience);
+      if (convenienceResponse.convenience)
+        addedConveniences.push(convenienceResponse.convenience);
     }
-  } 
+  };
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -225,8 +238,7 @@ const AddRoom = () => {
     const emptyFields = Object.keys(roomData).filter((key) => {
       const field = key as keyof typeof roomData;
       if (field === "standard") return false;
-      if (field === "images")
-        return roomData.images.length === 0;
+      if (field === "images") return roomData.images.length === 0;
       return roomData[field].length === 0;
     });
 
@@ -243,7 +255,6 @@ const AddRoom = () => {
     // Proceed with the API call or form submission
     setError("");
     setFindRoomError("");
-
 
     const room: Room = new Room({
       roomNr: Number(roomData.roomNr),
@@ -271,12 +282,11 @@ const AddRoom = () => {
       setError(imageResponse.message || "Error while adding image");
       return;
     }
-    if(imageResponse.images) roomData.images = imageResponse.images;
+    if (imageResponse.images) roomData.images = imageResponse.images;
 
     deleteConveniencesFromDb();
     addConveniencesToDb(room);
 
-    
     setFindRoomError("");
     setConfirmMessage("Room and conveniences added successfully!");
     // Reset roomData after submission

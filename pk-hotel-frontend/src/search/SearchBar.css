@@ -44,7 +44,7 @@ form {
 }
 
 .search-button {
-  background-color: #275DAD;
+  background-color: #275dad;
   transition: backgroud-color 0.3s ease;
 }
 
@@ -52,4 +52,7 @@ form {
   background-color: rgb(46, 85, 129);
 }
 
-
+.search-button:active,
+.search-button:focus {
+  background-color: #275dad;
+}

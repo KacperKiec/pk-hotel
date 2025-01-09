@@ -1,6 +1,5 @@
 import { HotelDTO } from '../Hotel/Hotel'
 import { Convenience, Images } from '../Panels/AdminPanel/Room/AddRoom'
-import Conveniences from '../Panels/AdminPanel/Room/Conveniences'
 import { RoomDTO } from '../Rooms/Room'
 import { User, UserDTO, transformUser} from '../Users/User'
 const baseUrl = 'http://localhost:8080'
@@ -630,7 +629,7 @@ export const addExtraApi = async ({name, pricePerDay}: AddExtraProps): Promise<{
 
 export const getAllExtrasApi = async (): Promise<{ status: number; message?: string; data?: any[] }> => {
    let allExtras: any[] = [];
-   let currentPage = 0;
+   let currentPage = 1;
 
    try {
       while (true) {
@@ -703,3 +702,103 @@ export const deleteExtraApi = async (id:number): Promise<{ status: number; messa
       };
    }
 }
+
+export const getHotelsFromCity = async (city: string): Promise<{ status: number; message?: string; data?: any }> => {
+   let allHotels: HotelDTO[] = [];
+   let currentPage = 1;
+
+   try {
+      while (true) {
+         const response = await fetch(`${baseUrl}/hotels/search?page=${currentPage}&cities=${city}`, {
+            method: 'GET',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+         });
+
+         if (!response.ok) {
+            const errorData = await response.json();
+            return {
+               status: response.status,
+               message: errorData.message || "Failed to fetch hotels.",
+            };
+         }
+
+         const responseData = await response.json();
+
+         const items = responseData.content || [];
+         allHotels = [...allHotels, ...items];
+
+         if (responseData.totalPages && currentPage >= responseData.totalPages) {
+            break;
+         }
+
+         currentPage++;
+      }
+
+      return {
+         status: 200,
+         data: allHotels,
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while fetching hotels.",
+      };
+   }
+}
+
+interface getRoomsWithFiltersProps{
+   standard?: string;
+   startDate?: string;
+   endDate?: string;
+   places?: number;
+   page: number;
+   city?: string;
+}
+
+export const getRoomsWithFilters = async ({ standard, startDate, endDate, places, page, city}: getRoomsWithFiltersProps): Promise<{status: number, message?: string, data?: any[]}> =>{
+   const params = new URLSearchParams(
+      Object.entries({
+        cities: city,
+        standard,
+        startDate,
+        endDate,
+        places: places ? places.toString() : undefined, // Convert number to string
+        page: page.toString(), // Ensure page is always included
+      })
+        .filter(([_, value]) => value !== undefined) // Filter out undefined
+        .map(([key, value]) => [key, value as string]) // Cast to string to satisfy types
+    );
+  
+    try {
+      const response = await fetch(`${baseUrl}/rooms/search?${params.toString()}`,{
+         method: 'GET',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         credentials: 'include',
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: response.status,
+            message: errorData.message || "Failed to fetch rooms.",
+         };
+      }
+
+      const responseData = await response.json();
+
+      return {
+         status: 200,
+         data: responseData.content,
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while fetching rooms.",
+      };
+   }
+} 
