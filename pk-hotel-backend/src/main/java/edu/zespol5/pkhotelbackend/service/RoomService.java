@@ -117,19 +117,19 @@ public class RoomService {
     }
 
     @Transactional
-    public void removeImage(Room room, List<Image> images) {
+    public void removeImage(Room room, List<Integer> imagesIds) {
         var existingRoom = roomRepository.findRoomByHotel_IdAndRoomNr(room.getHotel().getId(), room.getRoomNr()).orElseThrow(
                 () -> new RoomNotFoundException("Room not found")
         );
 
-        for (Image img : images) {
-            var existingImage = existingRoom.getImages().stream()
-                    .filter(image -> image.getImage().getPath().equals(img.getPath()))
-                    .findFirst()
-                    .orElseThrow(
-                            () -> new ImageNotFoundException("Image with path " + img.getPath() + " was not found")
+        for (Integer id : imagesIds) {
+            var img = existingRoom.getImages().stream()
+                    .filter(im -> im.getImage().getId().equals(id))
+                    .findFirst().orElseThrow(
+                            () -> new ImageNotFoundException("Image not found")
                     );
-            existingRoom.removeImage(existingImage);
+
+            existingRoom.removeImage(img);
         }
         roomRepository.save(existingRoom);
     }

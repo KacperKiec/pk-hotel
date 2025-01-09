@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/admin")
@@ -102,7 +103,7 @@ public class AdminController {
 
     @DeleteMapping(value = "/room-image")
     public ResponseEntity<?> removeRoomImages(@RequestBody RoomImageRequestDTO param) {
-        roomService.removeImage(param.getRoom(), param.getImages());
+        roomService.removeImage(param.getRoom(), param.getImages().stream().map(Image::getId).collect(Collectors.toList()));
         return ResponseEntity.noContent().build();
     }
 
