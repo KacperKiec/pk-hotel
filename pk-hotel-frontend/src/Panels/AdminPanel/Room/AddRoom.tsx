@@ -12,6 +12,7 @@ import {
   findRoomApi,
   removeConvenienceApi,
   removeRoomConveniencesApi,
+  updateRoomApi,
 } from "../../../Api/Api";
 
 export interface Images {
@@ -54,8 +55,8 @@ const AddRoom = () => {
 
   const [error, setError] = useState("");
   const [findRoomError, setFindRoomError] = useState("");
+  const [foundRoom, setFoundRoom] = useState<RoomData | undefined>(undefined);
   const [confirmMessage, setConfirmMessage] = useState("");
-  let foundRoom: RoomData | undefined;
 
   // Type guard to check if the event target is a file input
   const isFileInput = (element: HTMLElement): element is HTMLInputElement => {
@@ -112,6 +113,7 @@ const AddRoom = () => {
   };
 
   const handleFindRoom = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    setFoundRoom(undefined);
     const response = await findRoomApi(
       Number(roomData.hotelId),
       Number(roomData.roomNr)
@@ -143,6 +145,8 @@ const AddRoom = () => {
       images: foundRoomLocal.images,
       conveniences: foundRoomLocal.conveniences,
     }));
+    setFoundRoom(foundRoomLocal);
+    console.log(foundRoom);
     return;
   };
 
@@ -184,13 +188,12 @@ const AddRoom = () => {
   };
 
   const deleteConveniencesFromDb = () => {
-    if (!foundRoom) return;
     console.log(foundRoom);
+    if (!foundRoom) return;
     const conveniecesIds: number[] = [];
     foundRoom.conveniences.forEach((element) => {
       if (!roomData.conveniences.includes(element)) {
         if (element.id) {
-          removeConvenienceApi(element.id);
           conveniecesIds.push(element.id);
         }
       }
@@ -230,6 +233,39 @@ const AddRoom = () => {
     }
   };
 
+  const deleteImagesFromDb = () => {
+    if (!foundRoom) return;
+    const imagesIds: number[] = [];
+    foundRoom.images.forEach((element) => {
+      if (!roomData.images.includes(element)) {
+        if (element.id) {
+          imagesIds.push(element.id);
+        }
+      }
+    });
+
+    if (imagesIds.length > 0)
+      removeRoomConveniencesApi(
+        Number(roomData.roomNr),
+        Number(roomData.hotelId),
+        imagesIds
+      );
+  };
+
+  const addImagesToDb = async (room: Room) => {
+    const addedImages: Images[] = [];
+    // Add conveniences and assign to room
+    for (const image of roomData.images) {
+      if (foundRoom && foundRoom.images.includes(image)) continue;
+      addedImages.push(image);
+    }
+    const response = await addImageApi({
+      room: transformRoom(room),
+      images: addedImages,
+    });
+    if (response.message) setError(response.message);
+  };
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -267,28 +303,28 @@ const AddRoom = () => {
 
     const response = await addRoomApi(transformRoom(room));
 
-    if (response.status !== 201) {
-      setError(response.message || "Error while adding room");
-      return;
+    if (response.message) {
+      if (response.status !== 409) {
+        setError(response.message);
+        return;
+      }
     }
-
-    const roomImages: addImageProps = {
-      room: transformRoom(room),
-      images: roomData.images,
-    };
-
-    const imageResponse = await addImageApi(roomImages);
-    if (imageResponse.status !== 201) {
-      setError(imageResponse.message || "Error while adding image");
-      return;
+    if (response.status === 409) {
+      const updateResponse = await updateRoomApi(transformRoom(room));
+      if (updateResponse.message) {
+        setError(updateResponse.message);
+        return;
+      }
     }
-    if (imageResponse.images) roomData.images = imageResponse.images;
 
     deleteConveniencesFromDb();
     addConveniencesToDb(room);
 
+    addImagesToDb(room);
+
     setFindRoomError("");
     setConfirmMessage("Room and conveniences added successfully!");
+    setFoundRoom(undefined);
     // Reset roomData after submission
     setRoomData({
       hotelId: "",
@@ -375,7 +411,20 @@ const AddRoom = () => {
         />
 
         {roomData.images.length !== 0 && (
-          <Slider images={roomData.images} setRoomData={setRoomData} />
+          <Slider
+            images={roomData.images}
+            setRoomData={setRoomData}
+            room={
+              new Room({
+                roomNr: Number(roomData.roomNr),
+                hotelId: Number(roomData.hotelId),
+                standard: roomData.standard as Standard,
+                places: Number(roomData.places),
+                price: Number(roomData.price),
+                description: roomData.description,
+              })
+            }
+          />
         )}
 
         <InputWithLabel

@@ -8,6 +8,8 @@ import RegisterPage from "./Register/RegisterPage";
 import { User } from "./Users/User";
 import { UserPanel } from "./Panels/UserPanel/UserPanel";
 import { AdminPanel } from "./Panels/AdminPanel/AdminPanel";
+import RoomPage from "./Rooms/RoomPage";
+import { PaymentsPage } from "./Payments/PaymentsPage";
 
 function App() {
   const [loggedUser, setLoggedUser] = useState<User | undefined>(undefined);
@@ -20,7 +22,10 @@ function App() {
       />
       <div className="container">
         <Routes>
-          <Route path="/" element={<MainPage />}></Route>
+          <Route
+            path="/"
+            element={<MainPage loggedUser={loggedUser} />}
+          ></Route>
           <Route
             path="/login"
             element={
@@ -41,9 +46,19 @@ function App() {
               }
             ></Route>
           )}
-          <Route path="/admin-panel" element={<AdminPanel />}></Route>
+          <Route
+            path="/admin-panel"
+            element={
+              <AdminPanel
+                loggedUser={loggedUser}
+                setLoggedUser={setLoggedUser}
+              />
+            }
+          ></Route>
           <Route path="/forgot-password"></Route>
           <Route path="/register" element={<RegisterPage />}></Route>
+          <Route path="/room-page" element={<RoomPage />}></Route>
+          <Route path="/payments" element={<PaymentsPage />}></Route>
         </Routes>
       </div>
     </Router>

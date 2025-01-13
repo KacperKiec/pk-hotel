@@ -16,7 +16,6 @@ const Extras = () => {
     const response = await getAllExtrasApi();
     if (response.data) {
       setExtras(response.data);
-      console.log(response.data);
     }
   };
 
@@ -122,10 +121,8 @@ const Extras = () => {
         </thead>
         <tbody>
           {extras.map((element, index) => (
-            <tr key={index}>
-              <td data-label="Name" onClick={() => onRowClick(element.id)}>
-                {element.name}
-              </td>
+            <tr key={index} onClick={() => onRowClick(element.id)}>
+              <td data-label="Name">{element.name}</td>
               <td data-label="price-per-day">{element.pricePerDay}</td>
             </tr>
           ))}

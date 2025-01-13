@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import "./AdminPanel.css";
 import AddHotel from "./Hotel/AddHotel";
 import { DeleteHotel } from "./Hotel/DeleteHotel";
@@ -7,12 +7,31 @@ import UpdateHotel from "./Hotel/UpdateHotel";
 import DeleteRoom from "./Room/DeleteRoom";
 import Dropdown from "../common/Dropdown";
 import Extras from "./Extras/Extras";
+import { User } from "../../Users/User";
+import { useNavigate } from "react-router-dom";
+import { logoutAPI } from "../../Api/Api";
 
-export const AdminPanel = () => {
+interface AdminPanelProps {
+  loggedUser: User | undefined;
+  setLoggedUser: React.Dispatch<SetStateAction<User | undefined>>;
+}
+
+export const AdminPanel = ({ loggedUser, setLoggedUser }: AdminPanelProps) => {
   const [activeTab, setActiveTab] = useState(1);
 
   const tabsNamesHotel = ["Add Hotel", "Delete Hotel", "Update Hotel"];
   const tabsNamesRoom = ["Add/Update Room", "Delete Room"];
+  const navigator = useNavigate();
+
+  const handleLogout = async (e: any) => {
+    setLoggedUser(undefined);
+    try {
+      await logoutAPI();
+      navigator("/");
+    } catch (error) {
+      console.log("logout error!");
+    }
+  };
 
   return (
     <div className="user-panel-container ">
@@ -36,7 +55,19 @@ export const AdminPanel = () => {
           />
         </div>
         <div className="dropdown">
-          <button className="extras-btn dropdown-btn" onClick={()=>{setActiveTab(6)}}>Extras</button>
+          <button
+            className="extras-btn dropdown-btn"
+            onClick={() => {
+              setActiveTab(6);
+            }}
+          >
+            Extras
+          </button>
+        </div>
+        <div className="dropdown">
+          <button className="logout-btn dropdown-btn" onClick={handleLogout}>
+            Logout
+          </button>
         </div>
       </nav>
       {activeTab === 1 && <AddHotel />}

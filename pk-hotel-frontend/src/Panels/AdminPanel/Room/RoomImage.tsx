@@ -1,9 +1,12 @@
 import React from "react";
 import "./Slider/Slider.css";
 import { Convenience, Images } from "./AddRoom";
+import { removeImagesApi } from "../../../Api/Api";
+import { Room, transformRoom } from "../../../Rooms/Room";
 
 interface RoomImageInterface {
   image: Images;
+  room: Room;
   setRoomData: React.Dispatch<
     React.SetStateAction<{
       hotelId: string;
@@ -18,8 +21,9 @@ interface RoomImageInterface {
   >;
 }
 
-export const RoomImage = ({ image, setRoomData }: RoomImageInterface) => {
+export const RoomImage = ({ image, setRoomData, room }: RoomImageInterface) => {
   const onClick = () => {
+    removeImagesApi(transformRoom(room), [image]);
     setRoomData((prevState) => ({
       ...prevState, // Keep the previous state values unchanged
       images: prevState.images.filter((element) => image.path !== element.path), // Remove the imageUrl

@@ -1,0 +1,21 @@
+.reviews-page {
+  margin: 20px;
+}
+
+.review-card {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.review-card h3 {
+  margin-top: 0;
+  font-size: 1.5em;
+}
+
+.review-card p {
+  font-size: 1em;
+  margin: 5px 0;
+}
