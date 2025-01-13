@@ -1,4 +1,5 @@
 import { HotelDTO } from '../Hotel/Hotel'
+import { Extra } from '../Panels/AdminPanel/Extras/Extra'
 import { Convenience, Images } from '../Panels/AdminPanel/Room/AddRoom'
 import { RoomDTO } from '../Rooms/Room'
 import { User, UserDTO, transformUser} from '../Users/User'
@@ -248,7 +249,7 @@ export const addRoomApi = async (room: RoomDTO): Promise<{ status: number; messa
       };
    } catch (error: any) {
       return {
-         status: -1,
+         status: error.status,
          message: error.message || "An unexpected error occurred while adding the room.",
       };
    }
@@ -267,6 +268,8 @@ export const addImageApi = async (roomImages: addImageProps): Promise<{ status: 
          images: roomImages.images, // Use the transformed array here
       };
 
+      console.log(payload);
+
       const response = await fetch(`${baseUrl}/admin/room-image`, {
          method: 'POST',
          headers: {
@@ -275,7 +278,6 @@ export const addImageApi = async (roomImages: addImageProps): Promise<{ status: 
          body: JSON.stringify(payload),
          credentials: 'include',
       });
-
       if (!response.ok) {
          const errorData = await response.json();
          return {
@@ -295,6 +297,44 @@ export const addImageApi = async (roomImages: addImageProps): Promise<{ status: 
       return {
          status: -1,
          message: error.message || "An unexpected error occurred while adding images.",
+      };
+   }
+}
+
+export const removeImagesApi = async (room: RoomDTO, images: Images[]): Promise<{ status: number; message?: string;}> => {
+   try {
+      const response = await fetch(`${baseUrl}/admin/room-image`, {
+         method: 'DELETE',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({
+            room: {
+               hotel: {
+                  id: room.hotel.id
+               },
+               roomNr: room.roomNr
+            },
+            images
+         }),
+         credentials: 'include',
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: -1,
+            message: errorData.message || "Failed to delete images.",
+         };
+      }
+
+      return {
+         status: response.status,
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while deleting the images.",
       };
    }
 }
@@ -454,7 +494,7 @@ export const updateRoomApi = async (room: RoomDTO): Promise<{ status: number; me
    }
 }
 
-export const removeRoomConveniencesApi = async (roomNr: number, hotelID: number, convenienvesIDs: number[]): Promise<{ status: number; message?: string;}> => {
+export const removeRoomConveniencesApi = async (roomNr: number, hotelID: number, conveniencesIDs: number[]): Promise<{ status: number; message?: string;}> => {
    try {
       const response = await fetch(`${baseUrl}/admin/room-conveniences`, {
          method: 'DELETE',
@@ -468,7 +508,7 @@ export const removeRoomConveniencesApi = async (roomNr: number, hotelID: number,
                   id: hotelID
                }
             },
-            convenienveIds: convenienvesIDs
+            conveniencesIds: conveniencesIDs
          }),
          credentials: 'include',
       });
@@ -527,6 +567,37 @@ export const removeConvenienceApi = async (convenienveID: number): Promise<{ sta
 export const findHotelByName = async (name: string): Promise<{ status: number; message?: string; data?: any }> => {
    try {
       const response = await fetch(`${baseUrl}/hotels/search?name=${encodeURIComponent(name)}`, {
+         method: 'GET',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         credentials: 'include',
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: response.status,
+            message: errorData.message || "Failed to find this hotel.",
+         };
+      }
+
+      const data = await response.json();
+      return {
+         status: response.status,
+         data: data.content, // Assuming the response has a `content` property
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while searching for the hotel.",
+      };
+   }
+};
+
+export const findHotelById = async (id: number): Promise<{ status: number; message?: string; data?: any }> => {
+   try {
+      const response = await fetch(`${baseUrl}/hotels/${id}`, {
          method: 'GET',
          headers: {
             'Content-Type': 'application/json',
@@ -629,8 +700,7 @@ export const addExtraApi = async ({name, pricePerDay}: AddExtraProps): Promise<{
 
 export const getAllExtrasApi = async (): Promise<{ status: number; message?: string; data?: any[] }> => {
    let allExtras: any[] = [];
-   let currentPage = 1;
-
+   let currentPage = 0;
    try {
       while (true) {
          const response = await fetch(`${baseUrl}/admin/extra?page=${currentPage}`, {
@@ -654,10 +724,9 @@ export const getAllExtrasApi = async (): Promise<{ status: number; message?: str
          const items = responseData.content || [];
          allExtras = [...allExtras, ...items];
 
-         if (responseData.totalPages && currentPage >= responseData.totalPages) {
+         if (currentPage >= responseData.totalPages) {
             break;
          }
-
          currentPage++;
       }
 
@@ -802,3 +871,146 @@ export const getRoomsWithFilters = async ({ standard, startDate, endDate, places
       };
    }
 } 
+
+
+interface makeReservationProps {
+   user: UserDTO,
+   room: RoomDTO,
+   startDate: string,
+   endDate: string,
+   extras: Extra[]
+}
+
+export const makeReservationApi = async ({user, room, startDate, endDate, extras}: makeReservationProps): Promise<{status: number, message?: string, data?: any[]}> =>{
+   const content = {
+      reservation: {
+         user: {
+            email: user.email
+         },
+         room: {
+            roomNr: room.roomNr,
+            hotel: {
+               id: room.hotel.id
+            }
+         },
+         checkInDate: startDate,
+         checkOutDate: endDate
+      },
+      extraIds: extras.map((element) => element.id)
+   }
+
+   console.log(content);
+
+   try {
+      const response = await fetch(`${baseUrl}/reservation`, {
+         method: 'POST',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(content),
+         credentials: 'include',
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: response.status,
+            message: errorData.message || "Failed to make reservation.",
+         };
+      }
+
+      return {
+         status: response.status,
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while making reservation.",
+      };
+   }
+}
+
+export const getAllUserReservationsApi = async (): Promise<{ status: number; message?: string; data?: any[] }> => {
+   let allReservations: any[] = [];
+   let currentPage = 0;
+   try {
+      while (true) {
+         const response = await fetch(`${baseUrl}/user/reservations?page=${currentPage}`, {
+            method: 'GET',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+         });
+
+         if (!response.ok) {
+            const errorData = await response.json();
+            return {
+               status: response.status,
+               message: errorData.message || "Failed to fetch reservations.",
+            };
+         }
+
+         const responseData = await response.json();
+
+         const items = responseData.content || [];
+         allReservations = [...allReservations, ...items];
+
+         if (currentPage >= responseData.totalPages) {
+            break;
+         }
+         currentPage++;
+      }
+
+      return {
+         status: 200,
+         data: allReservations,
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while fetching reservations.",
+      };
+   }
+};
+
+export interface AddReviewProps {
+   hotel: {
+      id: number
+    };
+    user: {
+      email: string
+    };
+    rating: number;
+    content: string;
+}
+
+export const addReviewApi= async ({hotel, user, rating, content}: AddReviewProps): Promise<{ status: number; message?: string;}> => {
+   try {
+      const response = await fetch(`${baseUrl}/hotels/review`, {
+         method: 'POST',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({hotel, user, rating, content}),
+         credentials: 'include',
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         return {
+            status: response.status,
+            message: errorData.message || "Failed to add Review.",
+         };
+      }
+
+      return {
+         status: response.status,
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while adding review.",
+      };
+   }
+}

@@ -60,7 +60,7 @@ public class ReservationSpecification {
             if(clientId == null) {
                 return builder.conjunction();
             }
-            return builder.equal(root.join("client").get("id"), clientId);
+            return builder.equal(root.join("user").get("id"), clientId);
         };
     }
 }

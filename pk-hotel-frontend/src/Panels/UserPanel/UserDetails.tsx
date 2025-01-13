@@ -56,7 +56,6 @@ const UserDetails: React.FC<UserDetailsProps> = ({
 
     const response = await updateUserApi(updatedUser);
 
-    console.log(updatedUser);
     if (response.status === -1) {
       setUpdateError(true);
       //zmien wartosc inputow spowrotem na zalogowanego uzytkownika

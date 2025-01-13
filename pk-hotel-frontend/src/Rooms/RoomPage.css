@@ -1,0 +1,76 @@
+.content-container {
+  border: 1px solid darkgrey;
+  border-radius: 20px;
+  width: 1000px;
+  margin: 20px auto;
+  padding: 20px 10px;
+}
+
+.content-container h1 {
+  margin-left: 20px;
+  margin-bottom: 30px;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.reserve-btn {
+  background-color: #065a26;
+  width: 50%;
+  height: 50px;
+  border-radius: 20px;
+  color: white;
+}
+
+.reserve-btn:hover {
+  background-color: #5e816c;
+}
+
+.reserve-btn:visited {
+  background-color: #065a26;
+}
+
+.reserve-btn:focus {
+  background-color: #065a26;
+}
+
+.h1-container {
+  display: flex;
+  justify-content: center;
+}
+
+.extras {
+  margin-left: 30px;
+}
+
+.price {
+  margin-top: 30px;
+}
+
+.conveniences-list {
+  margin-left: 10px;
+  margin-bottom: 20px;
+}
+
+.convenience-span {
+  padding: 4px 10px;
+  background-color: #3e73c4;
+  text-justify: center;
+  border-radius: 5px;
+  color: white;
+  margin: 0 4px 4px 4px;
+}
+
+.error-message {
+  color: red;
+  justify-content: center;
+}
+
+.see-reviews {
+  text-decoration: underline;
+  color: blue;
+  cursor: pointer;
+}

@@ -210,17 +210,35 @@ public class ReservationService {
             String email,
             Pageable pageable) {
 
-        hotelRepository.findHotelById(hotelId).orElseThrow(
-                () -> new HotelNotFoundException("Hotel with id " + hotelId + " was not found")
-        );
+        // Check if hotelId is not null and validate it if provided
+        if (hotelId != null) {
+            hotelRepository.findHotelById(hotelId).orElseThrow(
+                    () -> new HotelNotFoundException("Hotel with id " + hotelId + " was not found")
+            );
+        }
 
+        // Ensure the user exists
         var user = userRepository.findUserByEmail(email).orElseThrow(
                 () -> new UserNotFoundException("Client with email " + email + " was not found")
         );
 
-        Specification<Reservation> spec = Specification.where(ReservationSpecification.hasStatus(status)
-                .and(ReservationSpecification.hasHotelId(hotelId)))
-                .and(ReservationSpecification.hasClientId(user.getId()));
+        // Build the specification dynamically based on provided filters
+        Specification<Reservation> spec = Specification.where(null);
+
+        // Add status filter if provided
+        if (status != null) {
+            spec = spec.and(ReservationSpecification.hasStatus(status));
+        }
+
+        // Add hotelId filter if provided
+        if (hotelId != null) {
+            spec = spec.and(ReservationSpecification.hasHotelId(hotelId));
+        }
+
+        // Add client filter
+        spec = spec.and(ReservationSpecification.hasClientId(user.getId()));
+
+        // Query the repository and return paginated results
         return repository.findAll(spec, pageable).map(this::toDTO);
     }
 
@@ -249,7 +267,7 @@ public class ReservationService {
         ).orElseThrow().getPrice();
 
         for(ReservationExtra extra: reservation.getExtras()) {
-            price += extra.getExtra().getPricePerDay();
+            price += extra.getExtra().getPricePerDay() * days;
         }
         dto.setTotalPrice(price);
 

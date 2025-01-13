@@ -7,16 +7,37 @@ import dayjs from "dayjs";
 import { HotelDTO } from "../Hotel/Hotel";
 import { Room } from "../Rooms/Room";
 
+export type image = {
+  id: number;
+  path: string;
+};
+
+export const getImagesUrl = (images: image[]) => {
+  const imagesUrl: string[] = [];
+  images.forEach((element) => {
+    imagesUrl.push(element.path);
+  });
+  return imagesUrl;
+};
+
 interface SearchBarProps {
   standard: number;
   setRooms: React.Dispatch<React.SetStateAction<Room[]>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  arrivalDate: string;
+  departureDate: string;
+  setArrivalDate: React.Dispatch<React.SetStateAction<string>>;
+  setDepartureDate: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const SearchBar = ({
   standard,
   setRooms,
   setLoading,
+  arrivalDate,
+  departureDate,
+  setArrivalDate,
+  setDepartureDate,
 }: SearchBarProps) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isPeopleCountVisible, setPeopleCountVisibility] = useState(false);
@@ -26,56 +47,10 @@ export const SearchBar = ({
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
 
-  const [arrivalDate, setArrivalDate] = useState(dayjs().format("YYYY-MM-DD"));
-  const [departureDate, setDepartureDate] = useState(
-    dayjs().format("YYYY-MM-DD")
-  );
-
   const dateButtonRef = useRef<HTMLButtonElement>(null);
   const peopleButtonRef = useRef<HTMLButtonElement>(null);
   const datePickerRef = useRef<HTMLDivElement>(null);
   const peoplePickerRef = useRef<HTMLDivElement>(null);
-
-  type image = {
-    id: number;
-    path: string;
-  };
-
-  const getImagesUrl = (images: image[]) => {
-    const imagesUrl: string[] = [];
-    images.forEach((element) => {
-      imagesUrl.push(element.path);
-    });
-    return imagesUrl;
-  };
-
-  useEffect(() => {
-    const fetchRooms = async () => {
-      const response = await getRoomsWithFilters({ page: 0 });
-      if (response.data) {
-        setRooms([]);
-        response.data.forEach((element) => {
-          setRooms((prev) => [
-            ...prev,
-            new Room({
-              hotelId: element.hotelId,
-              roomNr: element.roomNr,
-              standard: element.standard,
-              places: element.places,
-              description: element.description,
-              price: element.price,
-              imagesUrl: getImagesUrl(element.images),
-              reviews: element.reviews,
-              conveniences: element.conveniences,
-              name: element.name,
-            }),
-          ]);
-        });
-      }
-    };
-
-    fetchRooms();
-  }, []); // Empty dependency array ensures this runs only once when the component mounts
 
   const handleDateClick = (e: any) => {
     e.preventDefault();
@@ -172,16 +147,15 @@ export const SearchBar = ({
       setRooms((prev) => [
         ...prev,
         new Room({
-          hotelId: element.hotelId,
           roomNr: element.roomNr,
           standard: element.standard,
           places: element.places,
           description: element.description,
           price: element.price,
           imagesUrl: getImagesUrl(element.images),
-          reviews: element.reviews,
+          reviews: element.rating,
           conveniences: element.conveniences,
-          name: element.name,
+          hotelName: element.hotelName,
         }),
       ]);
     });

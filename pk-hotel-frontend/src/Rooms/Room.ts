@@ -15,6 +15,7 @@ export class Room {
   private _reviews: number = 0.0;
   private _conveniences: string[] = [];
   private _name: string = "";
+  private _hotelName: string = "";
 
   // Getter for checking if the room is new
   get isNew(): boolean {
@@ -25,6 +26,7 @@ export class Room {
   constructor(initializer: Partial<Room>) {
     if (!initializer) return;
     if (initializer.hotelId) this._hotelId = initializer.hotelId;
+    if (initializer.hotelName) this._hotelName = initializer.hotelName;
     if (initializer.roomNr) this._roomNr = initializer.roomNr;
     if (initializer.standard) this._standard = initializer.standard;
     if (initializer.places) this._places = initializer.places;
@@ -32,6 +34,7 @@ export class Room {
     if (initializer.price) this._price = initializer.price;
     if (initializer.imagesUrl) this._imagesUrl = initializer.imagesUrl;
     if (initializer.conveniences) this._conveniences = initializer.conveniences;
+    if (initializer.reviews) this._reviews = initializer.reviews;
   }
 
   // Getters and setters for encapsulated fields
@@ -40,6 +43,14 @@ export class Room {
   }
   set hotelId(value: number) {
     this._hotelId = value;
+  }
+
+  get hotelName(): string {
+    return this._hotelName;
+  }
+
+  set hotelName(name: string){
+    this._hotelName = name;
   }
 
   get roomNr(): number{
@@ -126,7 +137,7 @@ export const transformRoom = (room: Room): RoomDTO =>{
     places: room.places,
     price: room.price,
     standard: room.standard,
-    description: room.description,
+    description: room.description
   }
 }
 

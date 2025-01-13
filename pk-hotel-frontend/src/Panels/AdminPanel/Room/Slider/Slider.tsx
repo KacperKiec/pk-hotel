@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { RoomImage } from "../RoomImage";
 import "./Slider.css";
 import { Convenience, Images } from "../AddRoom";
+import { Room } from "../../../../Rooms/Room";
 
 interface SliderProps {
   images: Images[];
+  room: Room;
   setRoomData: React.Dispatch<
     React.SetStateAction<{
       hotelId: string;
@@ -19,7 +21,7 @@ interface SliderProps {
   >;
 }
 
-const Slider = ({ images, setRoomData }: SliderProps) => {
+const Slider = ({ images, setRoomData, room }: SliderProps) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const totalSlides = images.length + 1;
@@ -49,7 +51,7 @@ const Slider = ({ images, setRoomData }: SliderProps) => {
         }}
       >
         {images.map((element, index) => (
-          <RoomImage key={index} image={element} setRoomData={setRoomData} />
+          <RoomImage key={index} image={element} setRoomData={setRoomData} room={room}/>
         ))}
       </div>
       <button className="next-btn" type="button" onClick={handleNext}>
