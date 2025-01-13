@@ -38,3 +38,10 @@ ALTER TABLE room_image
         FOREIGN KEY (hotel_id, room_nr)
             REFERENCES room(hotel_id, room_nr)
             ON DELETE CASCADE;
+
+ALTER TABLE review
+DROP FOREIGN KEY review_ibfk_1;
+ALTER TABLE review
+    ADD CONSTRAINT review_ibfk_1
+        FOREIGN KEY (hotel_id) REFERENCES hotel(id)
+            ON DELETE CASCADE;

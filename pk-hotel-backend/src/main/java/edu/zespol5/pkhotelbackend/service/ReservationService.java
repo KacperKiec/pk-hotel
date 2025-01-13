@@ -22,6 +22,25 @@ import org.springframework.stereotype.Service;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+/**
+ * {@code ReservationService} provides business logic for managing hotel reservations.
+ * This service includes methods for creating, updating, retrieving, and deleting reservations,
+ * as well as calculating prices and validating reservation constraints.
+ *
+ * <p>
+ * The service interacts with multiple repositories to manage reservations, rooms, users, and extras.
+ * It ensures that rooms are available for the requested dates, validates reservation status, and handles
+ * the addition of extras to a reservation.
+ * </p>
+ *
+ * @see Reservation
+ * @see ReservationRepository
+ * @see UserRepository
+ * @see RoomRepository
+ * @see ExtraRepository
+ * @see HotelRepository
+ * @see ReservationDTO
+ */
 @Service
 public class ReservationService {
     private final ReservationRepository repository;
@@ -30,6 +49,15 @@ public class ReservationService {
     private final RoomRepository roomRepository;
     private final ExtraRepository extraRepository;
 
+    /**
+     * Constructs a new {@code ReservationService} with the provided repositories.
+     *
+     * @param repository the {@link ReservationRepository} used for accessing reservation data.
+     * @param userRepository the {@link UserRepository} used for accessing user data.
+     * @param hotelRepository the {@link HotelRepository} used for accessing hotel data.
+     * @param roomRepository the {@link RoomRepository} used for accessing room data.
+     * @param extraRepository the {@link ExtraRepository} used for accessing extra services data.
+     */
     public ReservationService(ReservationRepository repository, UserRepository userRepository, HotelRepository hotelRepository, RoomRepository roomRepository, ExtraRepository extraRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
@@ -38,6 +66,18 @@ public class ReservationService {
         this.extraRepository = extraRepository;
     }
 
+    /**
+     * Saves a new reservation with the provided details, including extras and user email.
+     *
+     * @param reservation the reservation to be saved.
+     * @param extraIds a list of extra IDs to be added to the reservation.
+     * @param email the email of the user making the reservation.
+     * @return the saved {@link ReservationDTO} object containing reservation details.
+     * @throws UserNotFoundException if the user is not found.
+     * @throws RoomNotFoundException if the room is not found.
+     * @throws IllegalOperationException if the check-in date is after the check-out date or the room is unavailable.
+     * @throws ExtraNotFoundException if an extra is not found.
+     */
     @Transactional
     public ReservationDTO save(Reservation reservation, List<Integer> extraIds, String email) {
 
@@ -84,6 +124,14 @@ public class ReservationService {
         return toDTO(repository.save(reservation));
     }
 
+    /**
+     * Updates an existing reservation with the provided details.
+     *
+     * @param reservation the updated reservation details.
+     * @return the updated {@link ReservationDTO} object containing reservation details.
+     * @throws ReservationNotFoundException if the reservation is not found.
+     * @throws IllegalOperationException if the check-in date is after the check-out date.
+     */
     @Transactional
     public ReservationDTO updateReservation(Reservation reservation) {
         var existingReservation = repository.findReservationById(reservation.getId()).orElseThrow(
@@ -122,17 +170,40 @@ public class ReservationService {
         return toDTO(repository.save(existingReservation));
     }
 
-
+    /**
+     * Retrieves a reservation by its ID.
+     *
+     * @param id the ID of the reservation.
+     * @return the {@link Reservation} object for the given ID.
+     * @throws ReservationNotFoundException if the reservation is not found.
+     */
     public Reservation getReservationById(int id) {
         return repository.findReservationById(id).orElseThrow(
                 () -> new ReservationNotFoundException("Reservation with id " + id + " was not found")
         );
     }
 
+    /**
+     * Retrieves all reservations with pagination support.
+     *
+     * @param pageable the pagination information.
+     * @return a {@link Page} of {@link ReservationDTO} objects.
+     */
     public Page<ReservationDTO> getAllReservations(Pageable pageable) {
         return repository.findAll(pageable).map(this::toDTO);
     }
 
+    /**
+     * Retrieves reservations by specific filters such as status, hotel ID, and user email.
+     *
+     * @param status the reservation status filter.
+     * @param hotelId the hotel ID filter.
+     * @param email the user email filter.
+     * @param pageable the pagination information.
+     * @return a {@link Page} of {@link ReservationDTO} objects matching the filters.
+     * @throws HotelNotFoundException if the hotel with the given ID is not found.
+     * @throws UserNotFoundException if the user with the given email is not found.
+     */
     public Page<ReservationDTO> getReservationsBy(
             ReservationStatus status,
             Integer hotelId,
@@ -153,6 +224,12 @@ public class ReservationService {
         return repository.findAll(spec, pageable).map(this::toDTO);
     }
 
+    /**
+     * Converts a {@link Reservation} object to a {@link ReservationDTO} object.
+     *
+     * @param reservation the reservation to be converted.
+     * @return the converted {@link ReservationDTO} object.
+     */
     private ReservationDTO toDTO(Reservation reservation) {
         ReservationDTO dto = new ReservationDTO();
         dto.setId(reservation.getId());

@@ -1,7 +1,6 @@
 package edu.zespol5.pkhotelbackend.controller;
 
 import edu.zespol5.pkhotelbackend.model.reservation.ReservationDTO;
-import edu.zespol5.pkhotelbackend.model.review.Review;
 import edu.zespol5.pkhotelbackend.model.review.ReviewDTO;
 import edu.zespol5.pkhotelbackend.model.user.User;
 import edu.zespol5.pkhotelbackend.model.user.UserDTO;
@@ -11,12 +10,19 @@ import edu.zespol5.pkhotelbackend.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller responsible for handling user-related requests, such as retrieving user profile,
+ * updating user details, fetching user reservations, and user reviews.
+ * <p>
+ * This controller provides endpoints for interacting with user data, including retrieving
+ * user information, managing reservations, and viewing user reviews.
+ * </p>
+ */
 @Controller
 @RequestMapping(value = "/user")
 public class UserController {
@@ -24,6 +30,13 @@ public class UserController {
     private final ReservationService reservationService;
     private final ReviewService reviewService;
 
+    /**
+     * Constructor for initializing the controller with the given services.
+     *
+     * @param userService the service responsible for user operations
+     * @param reservationService the service responsible for reservation operations
+     * @param reviewService the service responsible for review operations
+     */
     public UserController(UserService userService, ReservationService reservationService, ReviewService reviewService) {
         this.userService = userService;
         this.reservationService = reservationService;

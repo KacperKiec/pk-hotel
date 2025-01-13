@@ -16,6 +16,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller responsible for handling hotel-related requests, including searching hotels,
+ * retrieving hotel details, and managing reviews.
+ * <p>
+ * This class provides the endpoints for interacting with hotel data and reviews. It allows
+ * clients to search for hotels, view details of a specific hotel, and add/retrieve reviews.
+ * </p>
+ */
 @Controller
 @RequestMapping(value = "/hotels")
 public class HotelController {
@@ -23,6 +31,12 @@ public class HotelController {
     private final HotelService hotelService;
     private final ReviewService reviewService;
 
+    /**
+     * Constructor for initializing the controller with the given hotel and review services.
+     *
+     * @param hotelService the service responsible for hotel operations
+     * @param reviewService the service responsible for review operations
+     */
     public HotelController(HotelService hotelService, ReviewService reviewService) {
         this.hotelService = hotelService;
         this.reviewService = reviewService;
@@ -36,7 +50,7 @@ public class HotelController {
             @RequestParam(required = false) Integer lowerRatingLimit,
             @RequestParam(required = false) Integer upperRatingLimit,
             @RequestParam(defaultValue = "0") int page) {
-        Pageable pageable = PageRequest.of(0, 10);
+        Pageable pageable = PageRequest.of(page, 10);
         var result = hotelService.getHotelsBy(name, countries, cities, lowerRatingLimit, upperRatingLimit, pageable);
         return ResponseEntity.ok(result);
     }
@@ -51,5 +65,12 @@ public class HotelController {
     public ResponseEntity<ReviewDTO> addReview(Authentication auth, @RequestBody Review review) {
         var result = reviewService.addReview(review, auth.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    @GetMapping(value = "/review/{id}")
+    public ResponseEntity<Page<ReviewDTO>> getReviews(@RequestParam(defaultValue = "0") int page, @PathVariable int id) {
+        Pageable pageable = PageRequest.of(page, 10);
+        var result = reviewService.getReviewsBy(id, null, null, null, pageable);
+        return ResponseEntity.ok(result);
     }
 }

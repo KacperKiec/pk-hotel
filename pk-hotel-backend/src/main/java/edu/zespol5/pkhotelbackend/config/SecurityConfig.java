@@ -17,6 +17,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Security configuration class for the application.
+ * <p>
+ * This class configures authentication and authorization mechanisms using Spring Security.
+ * It defines beans for user authentication, password encoding, and the security filter chain.
+ * </p>
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -25,17 +32,37 @@ public class SecurityConfig {
     private final LogoutSuccessHandler logoutSuccessHandler;
     private final AuthenticationFailureHandler authenticationFailureHandler;
 
+    /**
+     * Constructor for {@code SecurityConfig}.
+     *
+     * @param loginSuccessHandler      handler for successful login events
+     * @param logoutSuccessHandler     handler for successful logout events
+     * @param authenticationFailureHandler handler for failed authentication attempts
+     */
     public SecurityConfig(LoginSuccessHandler loginSuccessHandler, LogoutSuccessHandler logoutSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler) {
         this.loginSuccessHandler = loginSuccessHandler;
         this.logoutSuccessHandler = logoutSuccessHandler;
         this.authenticationFailureHandler = authenticationFailureHandler;
     }
 
+    /**
+     * Creates a {@link UserDetailsService} bean that uses the {@link UserService} implementation.
+     *
+     * @param userService the user service to retrieve user details
+     * @return a {@link UserDetailsService} implementation
+     */
     @Bean
     public UserDetailsService userDetailsService(UserService userService) {
         return userService;
     }
 
+    /**
+     * Creates an {@link AuthenticationProvider} bean configured with a DAO-based user details service
+     * and a password encoder.
+     *
+     * @param userDetailsService the service used to retrieve user details
+     * @return a {@link DaoAuthenticationProvider} instance
+     */
     @Bean
     public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -44,6 +71,22 @@ public class SecurityConfig {
         return provider;
     }
 
+    /**
+     * Configures the security filter chain for the application.
+     * <p>
+     * This method sets up:
+     * <ul>
+     *     <li>CORS and CSRF policies</li>
+     *     <li>Form-based login and logout handling</li>
+     *     <li>Authorization rules for various URL patterns</li>
+     *     <li>Custom handlers for authentication success, failure, and logout events</li>
+     * </ul>
+     * </p>
+     *
+     * @param http the {@link HttpSecurity} object used to configure security settings
+     * @return a configured {@link SecurityFilterChain} instance
+     * @throws Exception if an error occurs during configuration
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -71,9 +114,14 @@ public class SecurityConfig {
                 .build();
     }
 
+    /**
+     * Creates a {@link PasswordEncoder} bean for encoding and validating passwords.
+     * This implementation uses BCrypt for hashing passwords.
+     *
+     * @return a {@link BCryptPasswordEncoder} instance
+     */
     @Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

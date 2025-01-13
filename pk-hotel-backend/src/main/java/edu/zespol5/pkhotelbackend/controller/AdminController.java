@@ -26,6 +26,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controller responsible for administrative actions in the hotel reservation system.
+ * <p>
+ * This controller provides endpoints for managing hotels, rooms, conveniences,
+ * extras, users, reservations, and images.
+ * </p>
+ */
 @Controller
 @RequestMapping(value = "/admin")
 public class AdminController {
@@ -37,6 +44,17 @@ public class AdminController {
     private final ReservationService reservationService;
     private final ImageService imageService;
 
+    /**
+     * Constructor for initializing the controller with necessary services.
+     *
+     * @param roomService       the service for room operations
+     * @param hotelService      the service for hotel operations
+     * @param convenienceService the service for convenience operations
+     * @param extraService      the service for extra operations
+     * @param userService       the service for user operations
+     * @param reservationService the service for reservation operations
+     * @param imageService      the service for image operations
+     */
     public AdminController(RoomService roomService, HotelService hotelService, ConvenienceService convenienceService, ExtraService extraService, UserService userService, ReservationService reservationService, ImageService imageService) {
         this.roomService = roomService;
         this.hotelService = hotelService;

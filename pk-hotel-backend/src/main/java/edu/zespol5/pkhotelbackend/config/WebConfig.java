@@ -11,10 +11,34 @@ import java.util.List;
 
 import static org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO;
 
+/**
+ * Configuration class for web-related settings in the application.
+ * <p>
+ * This class enables support for Spring Data web functionality and configures
+ * Cross-Origin Resource Sharing (CORS) settings.
+ * </p>
+ */
 @Configuration
 @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)
 public class WebConfig {
 
+    /**
+     * Creates a {@link CorsFilter} bean to handle CORS requests.
+     * <p>
+     * This configuration allows requests from the specified frontend origin and
+     * supports common HTTP methods and headers, including authentication headers.
+     * </p>
+     *
+     * <ul>
+     *     <li><b>Allowed Origins:</b> http://localhost:3000 (frontend application).</li>
+     *     <li><b>Allowed Methods:</b> GET, POST, PUT, DELETE, OPTIONS, PATCH.</li>
+     *     <li><b>Allowed Headers:</b> Authorization, Content-Type.</li>
+     *     <li><b>Exposed Headers:</b> Authorization.</li>
+     *     <li><b>Credentials:</b> Cookies and other credentials are allowed.</li>
+     * </ul>
+     *
+     * @return a configured {@link CorsFilter} instance
+     */
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();

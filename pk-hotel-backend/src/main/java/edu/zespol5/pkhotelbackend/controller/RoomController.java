@@ -16,11 +16,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Controller responsible for handling room-related requests, such as retrieving room details,
+ * searching rooms based on filters, and listing all available rooms.
+ * <p>
+ * This controller provides various endpoints for retrieving room information. Users can fetch
+ * all rooms, search for rooms with specific filters (such as price, standard, availability, etc.),
+ * or view details of a specific room in a hotel.
+ * </p>
+ */
 @Controller
 @RequestMapping(value = "/rooms")
 public class RoomController {
     private final RoomService roomService;
 
+    /**
+     * Constructor for initializing the controller with the given room service.
+     *
+     * @param roomService the service responsible for room operations
+     */
     public RoomController(RoomService roomService) {
         this.roomService = roomService;
     }
