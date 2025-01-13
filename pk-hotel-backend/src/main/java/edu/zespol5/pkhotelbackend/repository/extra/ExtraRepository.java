@@ -59,6 +59,13 @@ public interface ExtraRepository {
     Page<Extra> findAll(Pageable pageable);
 
     /**
+     * Retrieves a list of all {@link Extra} entities.
+     *
+     * @return a list containing the extra entities
+     */
+    List<Extra> findAll();
+
+    /**
      * Finds all {@link Extra} entities matching the provided specification.
      *
      * @param spec the specification to filter the extras

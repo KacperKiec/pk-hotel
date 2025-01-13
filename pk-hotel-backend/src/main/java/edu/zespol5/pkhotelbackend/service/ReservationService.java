@@ -222,24 +222,11 @@ public class ReservationService {
                 () -> new UserNotFoundException("Client with email " + email + " was not found")
         );
 
-        // Build the specification dynamically based on provided filters
-        Specification<Reservation> spec = Specification.where(null);
-
-        // Add status filter if provided
-        if (status != null) {
-            spec = spec.and(ReservationSpecification.hasStatus(status));
-        }
-
-        // Add hotelId filter if provided
-        if (hotelId != null) {
-            spec = spec.and(ReservationSpecification.hasHotelId(hotelId));
-        }
-
-        // Add client filter
-        spec = spec.and(ReservationSpecification.hasClientId(user.getId()));
-
-        // Query the repository and return paginated results
+        Specification<Reservation> spec = Specification.where(ReservationSpecification.hasStatus(status)
+                        .and(ReservationSpecification.hasHotelId(hotelId)))
+                        .and(ReservationSpecification.hasClientId(user.getId()));
         return repository.findAll(spec, pageable).map(this::toDTO);
+
     }
 
     /**

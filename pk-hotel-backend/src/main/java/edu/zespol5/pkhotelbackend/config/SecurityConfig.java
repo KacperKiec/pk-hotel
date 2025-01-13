@@ -1,6 +1,7 @@
 package edu.zespol5.pkhotelbackend.config;
 
 import edu.zespol5.pkhotelbackend.config.custom.AuthenticationFailureHandler;
+import edu.zespol5.pkhotelbackend.config.custom.LoginFailureHandler;
 import edu.zespol5.pkhotelbackend.config.custom.LoginSuccessHandler;
 import edu.zespol5.pkhotelbackend.config.custom.LogoutSuccessHandler;
 import edu.zespol5.pkhotelbackend.service.UserService;
@@ -29,6 +30,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final LoginSuccessHandler loginSuccessHandler;
+    private final LoginFailureHandler loginFailureHandler;
     private final LogoutSuccessHandler logoutSuccessHandler;
     private final AuthenticationFailureHandler authenticationFailureHandler;
 
@@ -39,8 +41,9 @@ public class SecurityConfig {
      * @param logoutSuccessHandler     handler for successful logout events
      * @param authenticationFailureHandler handler for failed authentication attempts
      */
-    public SecurityConfig(LoginSuccessHandler loginSuccessHandler, LogoutSuccessHandler logoutSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler) {
+    public SecurityConfig(LoginSuccessHandler loginSuccessHandler, LoginFailureHandler loginFailureHandler, LogoutSuccessHandler logoutSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler) {
         this.loginSuccessHandler = loginSuccessHandler;
+        this.loginFailureHandler = loginFailureHandler;
         this.logoutSuccessHandler = logoutSuccessHandler;
         this.authenticationFailureHandler = authenticationFailureHandler;
     }
@@ -96,6 +99,7 @@ public class SecurityConfig {
                         .usernameParameter("email")
                         .passwordParameter("password")
                         .successHandler(loginSuccessHandler)
+                        .failureHandler(loginFailureHandler)
                         .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")

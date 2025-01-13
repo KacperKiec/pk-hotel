@@ -49,6 +49,13 @@ public interface RoomRepository {
     Page<Room> findAll(Pageable pageable);
 
     /**
+     * Retrieves a list of rooms.
+     *
+     * @return a {@link Page} of rooms
+     */
+    List<Room> findAll();
+
+    /**
      * Retrieves a paginated list of rooms based on the given {@link Specification}.
      *
      * @param spec the specification used for filtering rooms

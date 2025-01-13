@@ -6,6 +6,7 @@ import edu.zespol5.pkhotelbackend.model.user.UserRole;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -59,6 +60,13 @@ public interface UserRepository {
      * @return a page of {@link User} entities.
      */
     Page<User> findAll(Pageable pageable);
+
+    /**
+     * Finds all users and returns a list.
+     *
+     * @return a page of {@link User} entities.
+     */
+    List<User> findAll();
 
     /**
      * Finds all users with a specific role and returns a paginated result.
