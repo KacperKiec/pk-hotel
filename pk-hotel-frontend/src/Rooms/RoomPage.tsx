@@ -10,6 +10,7 @@ import { Convenience } from "../Panels/AdminPanel/Room/AddRoom";
 import {
   findHotelByName,
   getAllExtrasApi,
+  getAllReviewsApi,
   makeReservationApi,
 } from "../Api/Api";
 import { User, transformUser } from "../Users/User";
@@ -23,7 +24,7 @@ const RoomPage = () => {
   const [allExtras, setAllExtras] = useState<Extra[]>([]);
 
   const [showReviews, setShowReviews] = useState(false);
-  const [reviews, setReviews] = useState<ReviewsPageProps>();
+  const [reviews, setReviews] = useState<ReviewsPageProps["reviews"]>([]);
 
   const getExtras = async () => {
     const response = await getAllExtrasApi();
@@ -63,8 +64,17 @@ const RoomPage = () => {
     room.conveniences.push(element.name);
   });
 
+  const getHotelId = async () => {
+    const response = await findHotelByName(room.hotelName);
+    if (response.message) {
+      setError(response.message);
+      return;
+    }
+    if (response.data) room.hotelId = response.data[0].id;
+  };
+  getHotelId();
+
   const loggedUser = location.state?.loggedUser as User | undefined;
-  console.log(loggedUser);
 
   const reservation: Reservation = new Reservation({
     room: room,
@@ -99,13 +109,6 @@ const RoomPage = () => {
       return;
     }
 
-    const findHotelResponse = await findHotelByName(room.hotelName);
-    if (findHotelResponse.message) {
-      setError(findHotelResponse.message);
-      return;
-    }
-    if (findHotelResponse.data) room.hotelId = findHotelResponse.data[0].id;
-
     const response = await makeReservationApi({
       user: transformUser(loggedUser),
       room: transformRoom(room),
@@ -121,7 +124,31 @@ const RoomPage = () => {
     }
   };
 
-  const displayReviews = () => {};
+  const getReviews = async () => {
+    if (showReviews) {
+      setShowReviews(false);
+      return;
+    }
+
+    setError("");
+    const response = await getAllReviewsApi(room.hotelId);
+    if (response.message) {
+      setError(response.message);
+      setShowReviews(false);
+      return;
+    }
+    const reviewsData =
+      response.data?.map((review) => ({
+        hotelName: review.hotelName || "",
+        userFirstName: review.userFirstName || "",
+        userLastName: review.userLastName || "",
+        rating: review.rating || 0,
+        comment: review.comment || "",
+      })) || [];
+
+    setShowReviews(true);
+    setReviews(reviewsData); // Reviews will always be an array
+  };
 
   return (
     <div className="content-container">
@@ -148,7 +175,11 @@ const RoomPage = () => {
       <p>
         Rating:{" "}
         <span>
-          {room.reviews}/5 (<span className="see-reviews">see reviews</span>)
+          {room.reviews}/5 (
+          <span className="see-reviews" onClick={getReviews}>
+            see reviews
+          </span>
+          )
         </span>
       </p>
       <p style={{ marginTop: "20px" }}>Conveniences:</p>
@@ -193,11 +224,10 @@ const RoomPage = () => {
         </button>
       </div>
       {error && <p className="error-message">{error}</p>}
+      {showReviews && reviews.length > 0 && <ReviewsPage reviews={reviews} />}
+      {showReviews && reviews.length === 0 && <p>No reviews available.</p>}
     </div>
   );
 };
 
 export default RoomPage;
-function transfromUser(loggedUser: User): import("../Users/User").UserDTO {
-  throw new Error("Function not implemented.");
-}

@@ -1,5 +1,5 @@
 import React from "react";
-import "./ReviewsPage.css";
+import "./RoomReview.css";
 
 interface ReviewProps {
   hotelName: string;

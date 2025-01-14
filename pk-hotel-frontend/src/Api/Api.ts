@@ -1014,3 +1014,48 @@ export const addReviewApi= async ({hotel, user, rating, content}: AddReviewProps
       };
    }
 }
+
+
+export const getAllReviewsApi = async (hotelId: number): Promise<{ status: number; message?: string; data?: any[] }> => {
+   let allReviews: any[] = [];
+   let currentPage = 0;
+   try {
+      while (true) {
+         const response = await fetch(`${baseUrl}/hotels/review/${hotelId}?page=${currentPage}`, {
+            method: 'GET',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+         });
+
+         if (!response.ok) {
+            const errorData = await response.json();
+            return {
+               status: response.status,
+               message: errorData.message || "Failed to fetch reviews.",
+            };
+         }
+
+         const responseData = await response.json();
+
+         const items = responseData.content || [];
+         allReviews = [...allReviews, ...items];
+
+         if (currentPage >= responseData.totalPages) {
+            break;
+         }
+         currentPage++;
+      }
+
+      return {
+         status: 200,
+         data: allReviews,
+      };
+   } catch (error: any) {
+      return {
+         status: -1,
+         message: error.message || "An unexpected error occurred while fetching reviews.",
+      };
+   }
+};
