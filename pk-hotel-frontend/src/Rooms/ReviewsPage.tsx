@@ -1,6 +1,6 @@
 import React from "react";
 import RoomReview from "./RoomReview";
-import "./ReviewsPage.css";
+import "./RoomReview.css";
 
 // Define the types for the reviews data passed as props
 export interface ReviewsPageProps {
