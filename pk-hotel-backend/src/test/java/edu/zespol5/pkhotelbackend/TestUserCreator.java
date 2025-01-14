@@ -24,8 +24,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 @SpringBootTest
@@ -57,22 +59,31 @@ public class TestUserCreator {
 
     @Test
     public void createMultipleTestUsers() {
+
+        LocalDate startDate = LocalDate.parse("1980-01-01");
+        LocalDate endDate = LocalDate.parse("2003-01-01");
+
         for (int i = 1; i <= 30; i++) {
             String firstName = "User" + i;
             String lastName = "Test" + i;
             String email = "user" + i + "@example.com";
 
-            createTestUser(firstName, lastName, email, UserRole.CLIENT);
+            createTestUser(firstName, lastName, email, UserRole.CLIENT, startDate, endDate);
         }
     }
 
-    private UserDTO createTestUser(String firstName, String lastName, String email, UserRole role) {
+    private UserDTO createTestUser(String firstName, String lastName, String email, UserRole role, LocalDate startDate, LocalDate endDate) {
         User user = new User();
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);
         user.setPassword("passs");
         user.setRole(role);
+
+        long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
+        long randomDays = ThreadLocalRandom.current().nextLong(0, daysBetween + 1);
+        user.setBirthDate(startDate.plusDays(randomDays));
+
         return userService.registerUser(user);
     }
 
