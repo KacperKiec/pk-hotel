@@ -63,7 +63,7 @@ public class TestUserCreator {
         LocalDate startDate = LocalDate.parse("1980-01-01");
         LocalDate endDate = LocalDate.parse("2003-01-01");
 
-        for (int i = 1; i <= 30; i++) {
+        for (int i = 1; i <= 100; i++) {
             String firstName = "User" + i;
             String lastName = "Test" + i;
             String email = "user" + i + "@example.com";
@@ -94,7 +94,7 @@ public class TestUserCreator {
         List<Room> rooms = roomRepository.findAll();
         List<Extra> extras = extraRepository.findAll();
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 200; i++) {
             User user = users.get(i % users.size());
             Room room = rooms.get(i % rooms.size());
             Extra extra = extras.get(i % extras.size());
@@ -127,7 +127,7 @@ public class TestUserCreator {
         List<Reservation> reservations = reservationRepository.findAll();
         Random random = new Random();
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 200; i++) {
 
             Reservation reservation = reservations.get(random.nextInt(reservations.size()));
 

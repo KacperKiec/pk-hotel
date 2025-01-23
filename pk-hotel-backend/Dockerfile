@@ -1,10 +1,27 @@
-FROM mysql:8.2.0
+# Use the official Maven image as the base image
+FROM maven:3.9-eclipse-temurin-22 AS build
 
-ENV MYSQL_ROOT_PASSWORD=root
-ENV MYSQL_DATABASE=pk_hotel_db
-ENV MYSQL_USER=developer
-ENV MYSQL_PASSWORD=developer
+# Set the working directory
+WORKDIR /app
 
-COPY ./src/main/resources/db/migration ./
+# Copy the pom.xml and any other necessary configuration files
+COPY ./pom.xml /app
+COPY ./src /app/src
 
-EXPOSE 3307
+# Build the application
+RUN mvn clean package -Dmaven.test.skip=true
+
+# Create a new image for running the application
+FROM eclipse-temurin:22-jre-alpine
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the built JAR file from the previous stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose the port on which the Spring Boot application will run
+EXPOSE 8080
+
+# Command to run the application
+CMD ["java", "-jar", "app.jar"]
