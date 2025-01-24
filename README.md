@@ -88,5 +88,5 @@ Database is filled with sample data of hotels and rooms. There are no users and 
 
 **Authors**
 This project was developed by:
-- Kacper Kiec
+- Kacper Kieć
 - Kamil Bołoz
