@@ -109,7 +109,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers("/user/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/reservation/**").authenticated()
+                        .requestMatchers("/reservation").authenticated()
                         .requestMatchers("/hotels/review").authenticated()
                         .anyRequest().permitAll())
                 .exceptionHandling(handler -> handler

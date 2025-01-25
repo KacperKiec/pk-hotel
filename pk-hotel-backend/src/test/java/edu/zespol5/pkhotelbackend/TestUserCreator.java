@@ -63,6 +63,8 @@ public class TestUserCreator {
         LocalDate startDate = LocalDate.parse("1980-01-01");
         LocalDate endDate = LocalDate.parse("2003-01-01");
 
+        createTestUser("admin", "admin", "asd", UserRole.ADMIN, startDate, endDate);
+
         for (int i = 1; i <= 100; i++) {
             String firstName = "User" + i;
             String lastName = "Test" + i;
@@ -106,7 +108,7 @@ public class TestUserCreator {
             reservation.setCheckOutDate(LocalDate.now().plusDays(i + 5));
             reservation.setStatus(ReservationStatus.ACCEPTED);
 
-            System.out.println(reservationService.save(reservation, List.of(extra.getId()), user.getEmail()));
+            reservationService.save(reservation, List.of(extra.getId()), user.getEmail());
 
         }
         Assertions.assertNotNull(reservationRepository.findAll());
